@@ -7,3 +7,4 @@ Andrew Fennell
 Austin Currington
 Xingjian Hao
 Connor Tisdel
+Jacob Smith
