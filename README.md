@@ -2,4 +2,7 @@
 Clone a voice and output speech in another language
 
 ## Team Members
-Andrew Fennell Xingjian Hao
+
+Andrew Fennell
+Austin Currington
+Xingjian Hao
