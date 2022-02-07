@@ -6,3 +6,4 @@ Clone a voice and output speech in another language
 Andrew Fennell
 Austin Currington
 Xingjian Hao
+Connor Tisdel
