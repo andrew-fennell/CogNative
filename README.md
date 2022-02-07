@@ -3,5 +3,11 @@ Clone a voice and output speech in another language
 This thing is gonna make us the next elon musk showering in $100 b bills.
 
 ## Team Members
-Andrew Fennell
-Aref Sadeghi
+
+- Andrew Fennell
+- Austin Currington
+- Xingjian Hao
+- Connor Tisdel
+- Jacob Smith
+- Aref Sadeghi
+
