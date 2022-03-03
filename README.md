@@ -1,6 +1,7 @@
-# translated-voice-cloning
-Clone a voice and output speech in another language
-This thing is gonna make us the next elon musk showering in $100 b bills.
+# CogNative
+## Translated Voice Synthesis
+
+Clone a voice and output speech in another language with the original voice.
 
 ## Team Members
 
