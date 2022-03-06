@@ -1,0 +1,13 @@
+In order to user google translate, install googltrans package: 
+pip install googletrans
+If this does not work, do the following:
+pip install googletrans==4.0.0-rc1
+
+
+To use Microsoft translate, We need a Microsoft Azure account. I already created one. 
+
+These two APIs are currently the most best ones out there. They are both very accurate. 
+
+Microsoft allows up to 2 million characters a month for free while googlte transltate does not have a limit. Both are good options for the scope of the project
+
+I provided a sample code for both APIs. It is very hard to pick a winner. I would personally go with Google Translate.
