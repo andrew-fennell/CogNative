@@ -1,5 +1,6 @@
 import speech_recognition as sr
 
+
 class STT:
     def __init__(self, source_language="english", engine="google"):
         """Speech-to-Text module that converts audio input to text output.
@@ -34,11 +35,13 @@ class STT:
             # Generate text from audio
             if self.engine == "google":
                 text = self.r.recognize_google(data)
-            
+
             # If an engine that is not supported was entered
             else:
-                raise(Exception('Please select a supported speech recognition engine.'))
-            
+                raise (
+                    Exception("Please select a supported speech recognition engine.")
+                )
+
         # Saves text data associated with audio file path within the object
         self.stt_data[file_path] = text
 
