@@ -2,7 +2,7 @@ import speech_recognition as sr
 
 
 class STT:
-    def __init__(self, source_language="english", engine="google"):
+    def __init__(self, source_language="english"):
         """Speech-to-Text module that converts audio input to text output.
 
         Arguments:
@@ -29,7 +29,6 @@ class STT:
 
         # Variable initialization
         self.source_language = available_languages[source_language]
-        self.engine = engine
 
         # Speech Recognition initializations
         self.r = sr.Recognizer()
@@ -47,24 +46,21 @@ class STT:
         with sr.AudioFile(file_path) as source:
             # Extract data from audio file
             data = self.r.record(source)
-
-            # Choose which engine to use to perform STT
             # Generate text from audio
-            if self.engine == "google":
-
-                text = self.r.recognize_google(data, language=self.source_language)
-
-            # If an engine that is not supported was entered
-            else:
-                raise (
-                    Exception("Please select a supported speech recognition engine.")
-                )
+            text = self.r.recognize_google(data, language=self.source_language)
 
         # Saves text data associated with audio file path within the object
         self.stt_data[file_path] = text
 
         return text
-
+    
+    def get_transcriptions(self):
+        """Returns all transcriptions performed by this object.
+        
+        Output:
+        dict[file_path]: transcription of file_path
+        """
+        return self.stt_data
 
 if __name__ == "__main__":
 
