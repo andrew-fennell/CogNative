@@ -1,5 +1,8 @@
+import sys
 import speech_recognition as sr
 
+sys.path.append("../")
+from languages import available_languages
 
 class STT:
     def __init__(self, source_language="english"):
@@ -10,25 +13,13 @@ class STT:
         engine -- Engine used to perform speech recognition
         """
 
-        available_languages = {
-            "english": "en-US",
-            "english-GB": "en-GB",
-            "english-AU": "en-AU",
-            "japanese": "ja-JP",
-            "chinese": "zh",
-            "spanish": "es-MX",
-            "spanish-ES": "es-ES",
-            "french": "fr-FR",
-            "german": "de-DE"
-        }
-
         if source_language not in available_languages.keys():
             raise (
                     Exception("Please select a supported language.")
                 )
 
         # Variable initialization
-        self.source_language = available_languages[source_language]
+        self.source_language = available_languages[source_language]["stt"]
 
         # Speech Recognition initializations
         self.r = sr.Recognizer()
@@ -61,6 +52,7 @@ class STT:
         dict[file_path]: transcription of file_path
         """
         return self.stt_data
+
 
 if __name__ == "__main__":
 
