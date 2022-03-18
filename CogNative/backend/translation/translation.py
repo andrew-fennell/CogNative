@@ -4,20 +4,18 @@ from googletrans import Translator
 sys.path.append("../")
 from languages import available_languages
 
-class translation:
 
+class translation:
     def __init__(self):
         self.translator = Translator()
-    
+
     def convert_language(self, lang):
-        """This function ensures that the source language and 
+        """This function ensures that the source language and
         destination language are supported by this module."""
 
         if lang not in available_languages.keys():
-            raise (
-                    Exception("Please select a supported language.")
-                )
-        
+            raise (Exception("Please select a supported language."))
+
         return available_languages[lang]["translation"]
 
     def translate(self, text, src, des):

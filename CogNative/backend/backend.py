@@ -1,15 +1,15 @@
 from stt import STT
 from translation import translation
 
-class speech_translation:
 
+class speech_translation:
     def __init__(self):
         # Instantiate variables
         self.data = {}
 
     def translate_audio(self, audio_file_path, src_lang, dest_lang):
         """Convert audio in source language to text in destination language."""
-        
+
         # Instantiate STT and Translation objects
         stt = STT.STT(source_language=src_lang)
         tr = translation.translation()
@@ -22,6 +22,7 @@ class speech_translation:
 
         return dest_text
 
+
 if __name__ == "__main__":
     translator = speech_translation()
 
@@ -30,5 +31,5 @@ if __name__ == "__main__":
     dest_lang = input("Destination language: ")
 
     translated_text = translator.translate_audio(file_path, src_lang, dest_lang)
-    
+
     print(translated_text)

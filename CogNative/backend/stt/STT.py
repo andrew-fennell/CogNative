@@ -4,6 +4,7 @@ import speech_recognition as sr
 sys.path.append("../")
 from languages import available_languages
 
+
 class STT:
     def __init__(self, source_language="english"):
         """Speech-to-Text module that converts audio input to text output.
@@ -14,9 +15,7 @@ class STT:
         """
 
         if source_language not in available_languages.keys():
-            raise (
-                    Exception("Please select a supported language.")
-                )
+            raise (Exception("Please select a supported language."))
 
         # Variable initialization
         self.source_language = available_languages[source_language]["stt"]
@@ -44,10 +43,10 @@ class STT:
         self.stt_data[file_path] = text
 
         return text
-    
+
     def get_transcriptions(self):
         """Returns all transcriptions performed by this object.
-        
+
         Output:
         dict[file_path]: transcription of file_path
         """
