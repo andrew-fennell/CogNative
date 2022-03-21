@@ -38,6 +38,14 @@ To style your code, please use the Black Python styler.
 Single file:    ```black <python-file-name>```
 All files:      ```black .```
 
+## Credit to Real-Time-Voice-Cloning
+
+This github repository serves as the foundation of our voice cloning module.
+
+https://github.com/CorentinJ/Real-Time-Voice-Cloning
+
+See license [here](CogNative/backend/Real-Time-Voice-Cloning/LICENSE.md)
+
 ## Team Members
 
 - Andrew Fennell
