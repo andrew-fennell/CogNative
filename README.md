@@ -33,6 +33,10 @@ Once installed, extract the folder and add ```<ffmpeg folder path>/bin``` to pat
 ### 5. Install required Python packages:
 ```pip3 install -r requirements.txt```
 
+### 6. Install [models](https://drive.google.com/drive/folders/1fipYnvRT3vayNuGvhfuX1hL0ZC4mEAfs?usp=sharing).
+
+  Once installed, add the models (*.pt) to ```CogNative/CogNative/models/Real-Time-Voice-Cloning/saved_models/default```
+
 ## Contributing to the project
 
 - Create your own branch ```git branch yourname-feature-name```
