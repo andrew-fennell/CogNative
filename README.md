@@ -58,7 +58,7 @@ This github repository serves as the foundation of our voice cloning module.
 
 [Real-Time-Voice-Cloning](https://github.com/CorentinJ/Real-Time-Voice-Cloning)
 
-See license [here](CogNative/backend/Real-Time-Voice-Cloning/LICENSE.md).
+See license [here](CogNative/models/Real-Time-Voice-Cloning/LICENSE.md).
 
 ## Team Members
 
