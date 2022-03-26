@@ -19,9 +19,9 @@ import os
 print(os.getcwd())
 
 # SET UP PRETRAINED MODEL PATHS
-enc_weights = Path("encoder.pt")
-voc_weights = Path("vocoder.pt")
-synth_dir = Path("synthesizer.pt")
+enc_weights = Path("Real-Time-Voice-Cloning/saved_models/default/encoder.pt")
+voc_weights = Path("Real-Time-Voice-Cloning/saved_models/default/vocoder.pt")
+synth_dir = Path("Real-Time-Voice-Cloning/saved_models/default/synthesizer.pt")
 
 # LOAD PRETRAINED MODELS
 encoder.load_model(enc_weights)
