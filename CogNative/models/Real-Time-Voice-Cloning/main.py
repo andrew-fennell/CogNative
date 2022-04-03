@@ -32,8 +32,13 @@ synthesizer = Synthesizer(synth_dir)
 vocoder.load_model(voc_weights)
 
 # DEFINE OUTPUT TEXT FOR VOICE CLONE
-text = input("Enter text for voice clone:\n")
-assert text[-1] == ".", f"{Fore.RED}ERROR: Punctuation missing."
+filename_txt = input(Fore.LIGHTGREEN_EX + "Enter name of input text file:\n")
+in_txt = Path(f"Clone_Tests/{filename_txt}.txt")
+assert os.path.exists(in_txt), f"{Fore.RED}ERROR: File not found."
+text_file = open(f"Clone_Tests/{filename_txt}.txt", "r")
+text_data = text_file.read()
+text_file.close()
+print(text_data)
 
 # ENCODE INPUT WAVEFORM
 filename = input(Fore.LIGHTGREEN_EX + "Enter name of input audio file:\n")
@@ -51,7 +56,7 @@ embed_wav = audio.preprocess_wav(og_wav, sampling_rate)
 embed = encoder.embed_utterance(embed_wav)
 
 with io.capture_output() as captured:
-    specs = synthesizer.synthesize_spectrograms([text], [embed])
+    specs = synthesizer.synthesize_spectrograms([text_data], [embed])
 
 # GENERATE UTTERANCE WITH VOCODER
 gen_wav = vocoder.infer_waveform(specs[0])
@@ -64,5 +69,5 @@ out_f = Path(f"Clone_Tests/{filename}_Clone.wav")
 aud.save_wav(gen_wav, out_f)
 
 rate, data = wavfile.read(f"Clone_Tests/{filename}_Clone.wav")
-reduced_noise = nr.reduce_noise(y=data, sr=rate)
+reduced_noise = nr.reduce_noise(y=data, sr=rate, prop_decrease=0.75)
 wavfile.write(f"Clone_Tests/{filename}_Clone_Post.wav", rate, reduced_noise)
