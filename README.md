@@ -35,7 +35,7 @@ Once installed, extract the folder and add ```<ffmpeg folder path>/bin``` to pat
 
 ### 6. Install [models](https://drive.google.com/drive/folders/1fipYnvRT3vayNuGvhfuX1hL0ZC4mEAfs?usp=sharing).
 
-  Once installed, add the models (*.pt) to ```CogNative/CogNative/models/Real-Time-Voice-Cloning/saved_models/default```
+  Once installed, add the models (*.pt) to ```CogNative/CogNative/models/RTVC/saved_models/default```
 
 ## Contributing to the project
 
@@ -58,7 +58,7 @@ This github repository serves as the foundation of our voice cloning module.
 
 [Real-Time-Voice-Cloning](https://github.com/CorentinJ/Real-Time-Voice-Cloning)
 
-See license [here](CogNative/models/Real-Time-Voice-Cloning/LICENSE.md).
+See license [here](CogNative/models/RTVC/LICENSE.md).
 
 ## Team Members
 

@@ -130,8 +130,8 @@ dmypy.json
 .pyre/
 
 # Test audio
-CogNative/models/Clone_Tests
-CogNative/backend/stt/examples
+CogNative/models/Clone_Tests/
+CogNative/backend/stt/examples/
 
 # Saved models
-CogNative/models/Real-Time-Voice-Cloning/saved_models/default
+CogNative/models/RTVC/saved_models/default/
