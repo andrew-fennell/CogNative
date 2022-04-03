@@ -38,7 +38,6 @@ assert os.path.exists(in_txt), f"{Fore.RED}ERROR: File not found."
 text_file = open(f"Clone_Tests/{filename_txt}.txt", "r")
 text_data = text_file.read()
 text_file.close()
-print(text_data)
 
 # ENCODE INPUT WAVEFORM
 filename = input(Fore.LIGHTGREEN_EX + "Enter name of input audio file:\n")
