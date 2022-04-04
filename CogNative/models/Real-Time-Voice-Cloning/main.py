@@ -16,6 +16,9 @@ import numpy as np
 import librosa
 import os
 
+from scipy.io import wavfile
+import noisereduce as nr
+
 print(os.getcwd())
 
 # SET UP PRETRAINED MODEL PATHS
@@ -59,3 +62,7 @@ gen_wav = np.pad(gen_wav, (0, synthesizer.sample_rate), mode="constant")
 print(Fore.LIGHTGREEN_EX + "\nExporting clone to", Fore.CYAN + "Clone_Tests")
 out_f = Path(f"Clone_Tests/{filename}_Clone.wav")
 aud.save_wav(gen_wav, out_f)
+
+rate, data = wavfile.read(f"Clone_Tests/{filename}_Clone.wav")
+reduced_noise = nr.reduce_noise(y=data, sr=rate, prop_decrease=0.75)
+wavfile.write(f"Clone_Tests/{filename}_Clone_Post.wav", rate, reduced_noise)
