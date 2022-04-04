@@ -32,13 +32,8 @@ synthesizer = Synthesizer(synth_dir)
 vocoder.load_model(voc_weights)
 
 # DEFINE OUTPUT TEXT FOR VOICE CLONE
-filename_txt = input(Fore.LIGHTGREEN_EX + "Enter name of input text file:\n")
-in_txt = Path(f"Clone_Tests/{filename_txt}.txt")
-assert os.path.exists(in_txt), f"{Fore.RED}ERROR: File not found."
-text_file = open(f"Clone_Tests/{filename_txt}.txt", "r")
-text_data = text_file.read()
-text_file.close()
-print(text_data)
+text = input("Enter text for voice clone:\n")
+assert text[-1] == ".", f"{Fore.RED}ERROR: Punctuation missing."
 
 # ENCODE INPUT WAVEFORM
 filename = input(Fore.LIGHTGREEN_EX + "Enter name of input audio file:\n")
@@ -56,7 +51,7 @@ embed_wav = audio.preprocess_wav(og_wav, sampling_rate)
 embed = encoder.embed_utterance(embed_wav)
 
 with io.capture_output() as captured:
-    specs = synthesizer.synthesize_spectrograms([text_data], [embed])
+    specs = synthesizer.synthesize_spectrograms([text], [embed])
 
 # GENERATE UTTERANCE WITH VOCODER
 gen_wav = vocoder.infer_waveform(specs[0])
