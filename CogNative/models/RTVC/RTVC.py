@@ -12,6 +12,9 @@ from pathlib import Path
 from pydub import AudioSegment
 from colorama import Fore
 
+from scipy.io import wavfile
+import noisereduce as nr
+
 import numpy as np
 import librosa
 import os
@@ -61,6 +64,10 @@ class RTVC:
             print(Fore.LIGHTGREEN_EX + "\nExporting clone to", Fore.CYAN + f"/{out_path}")
             out_f = Path(f"./{out_path}")
             aud.save_wav(gen_wav, out_f)
+
+            rate, data = wavfile.read(out_path)
+            reduced_noise = nr.reduce_noise(y=data, sr=rate, prop_decrease=0.75)
+            wavfile.write(out_path, rate, reduced_noise)
 
 
 if __name__ == "__main__":    
