@@ -1,6 +1,6 @@
 from googletrans import Translator
 
-from backend.languages import languages
+from modules import languages
 
 
 class translation:
@@ -11,10 +11,10 @@ class translation:
         """This function ensures that the source language and
         destination language are supported by this module."""
 
-        if lang not in languages.keys():
+        if lang not in languages.available_languages.keys():
             raise (Exception("Please select a supported language."))
 
-        return languages[lang]["translation"]
+        return languages.available_languages[lang]["translation"]
 
     def translate(self, text, src, des):
         """This function requires both source and destination languages."""

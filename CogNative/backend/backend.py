@@ -1,5 +1,4 @@
-from backend import STT
-from backend import translation
+from modules import STT, translation
 
 
 class speech_transcription:
@@ -30,6 +29,6 @@ if __name__ == "__main__":
     src_lang = input("Source language: ")
     dest_lang = input("Destination language: ")
 
-    translated_text = translator.translate_audio(file_path, src_lang, dest_lang)
+    translated_text = translator.transcribe_audio(file_path, src_lang, dest_lang)
 
     print(translated_text)
