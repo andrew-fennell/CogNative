@@ -1,5 +1,5 @@
 from multiprocessing.pool import Pool
-from synthesizer import audio
+from ..synthesizer import audio
 from functools import partial
 from itertools import chain
 from encoder import inference as encoder

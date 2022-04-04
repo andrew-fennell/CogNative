@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+CogNative/models/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -130,7 +131,7 @@ dmypy.json
 .pyre/
 
 # Test audio
-CogNative/models/Clone_Tests/
+CogNative/Clone_Tests/
 CogNative/backend/stt/examples/
 
 # Saved models

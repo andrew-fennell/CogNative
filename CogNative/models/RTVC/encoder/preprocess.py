@@ -6,9 +6,9 @@ from pathlib import Path
 import numpy as np
 from tqdm import tqdm
 
-from encoder import audio
-from encoder.config import librispeech_datasets, anglophone_nationalites
-from encoder.params_data import *
+from ..encoder import audio
+from ..encoder.config import librispeech_datasets, anglophone_nationalites
+from ..encoder.params_data import *
 
 
 _AUDIO_EXTENSIONS = ("wav", "flac", "m4a", "mp3")

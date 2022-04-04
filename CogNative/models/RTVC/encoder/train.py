@@ -2,10 +2,10 @@ from pathlib import Path
 
 import torch
 
-from encoder.data_objects import SpeakerVerificationDataLoader, SpeakerVerificationDataset
-from encoder.model import SpeakerEncoder
-from encoder.params_model import *
-from encoder.visualizations import Visualizations
+from ..encoder.data_objects import SpeakerVerificationDataLoader, SpeakerVerificationDataset
+from ..encoder.model import SpeakerEncoder
+from ..encoder.params_model import *
+from ..encoder.visualizations import Visualizations
 from utils.profiler import Profiler
 
 

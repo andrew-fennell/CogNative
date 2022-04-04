@@ -1,4 +1,4 @@
-available_languages = {
+languages = {
     "english": {"stt": "en-US", "translation": "en"},
     "english-GB": {"stt": "en-GB", "translation": "en"},
     "english-AU": {"stt": "en-AU", "translation": "en"},

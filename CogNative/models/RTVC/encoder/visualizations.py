@@ -5,7 +5,7 @@ import numpy as np
 import umap
 import visdom
 
-from encoder.data_objects.speaker_verification_dataset import SpeakerVerificationDataset
+from ..encoder.data_objects.speaker_verification_dataset import SpeakerVerificationDataset
 
 
 colormap = np.array([
