@@ -64,5 +64,5 @@ out_f = Path(f"Clone_Tests/{filename}_Clone.wav")
 aud.save_wav(gen_wav, out_f)
 
 rate, data = wavfile.read(f"Clone_Tests/{filename}_Clone.wav")
-reduced_noise = nr.reduce_noise(y=data, sr=rate)
+reduced_noise = nr.reduce_noise(y=data, sr=rate, prop_decrease=0.75)
 wavfile.write(f"Clone_Tests/{filename}_Clone_Post.wav", rate, reduced_noise)
