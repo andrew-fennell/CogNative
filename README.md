@@ -60,6 +60,14 @@ This github repository serves as the foundation of our voice cloning module.
 
 See license [here](CogNative/models/RTVC/LICENSE.md).
 
+## Credit to noisereduce
+
+This github repository is used for noise reduction postprocessing on the synthesized output.
+
+[noisereduce](https://github.com/timsainb/noisereduce)
+
+See license [here](https://github.com/timsainb/noisereduce/blob/master/LICENSE)
+
 ## Team Members
 
 - Andrew Fennell
