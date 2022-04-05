@@ -1,13 +1,12 @@
-from stt import STT
-from translation import translation
+from modules import STT, translation
 
 
-class speech_translation:
+class speech_transcription:
     def __init__(self):
         # Instantiate variables
         self.data = {}
 
-    def translate_audio(self, audio_file_path, src_lang, dest_lang):
+    def transcribe_audio(self, audio_file_path, src_lang, dest_lang):
         """Convert audio in source language to text in destination language."""
 
         # Instantiate STT and Translation objects
@@ -24,12 +23,12 @@ class speech_translation:
 
 
 if __name__ == "__main__":
-    translator = speech_translation()
+    translator = speech_transcription()
 
     file_path = input("Enter your audio file path: ")
     src_lang = input("Source language: ")
     dest_lang = input("Destination language: ")
 
-    translated_text = translator.translate_audio(file_path, src_lang, dest_lang)
+    translated_text = translator.transcribe_audio(file_path, src_lang, dest_lang)
 
     print(translated_text)

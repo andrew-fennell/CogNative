@@ -27,3 +27,7 @@ Sentences translated into other languages: https://tatoeba.org/en/
 - arabic (Saudi Arabia)
 - arabic (Iraq)
 - turkish
+
+## Developer Note
+
+Additional languages that Google's STT can identify: https://cloud.google.com/speech-to-text/docs/languages

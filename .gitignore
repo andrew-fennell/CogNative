@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+CogNative/models/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -128,3 +129,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Test audio
+CogNative/Clone_Tests/
+CogNative/backend/stt/examples/
+
+# Saved models
+CogNative/models/RTVC/saved_models/default/
