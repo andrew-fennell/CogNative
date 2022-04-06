@@ -10,7 +10,7 @@ from .vocoder import audio as aud
 
 from pathlib import Path
 from pydub import AudioSegment
-from colorama import Fore
+from .utils.printing import colorize
 
 from scipy.io import wavfile
 import noisereduce as nr
@@ -39,9 +39,9 @@ class RTVC:
         # SET FILE PATH
         self.file_path = file_path
         in_wav = Path(self.file_path)
-        assert os.path.exists(in_wav), f"{Fore.RED}ERROR: File not found."
+        assert os.path.exists(in_wav), "ERROR: File not found."
 
-        print(Fore.LIGHTGREEN_EX + "Loading requested file...")
+        print(colorize("Loading requested file...", 'success'))
 
         # SYNTHESIZE EXPECTED OUTPUT WAVEFORM
         enc_wav = audio.preprocess_wav(in_wav)
@@ -61,8 +61,8 @@ class RTVC:
 
             # Output voice clone
             # Audio(out_wav, rate=synthesizer.sample_rate)
-            print(Fore.LIGHTGREEN_EX + "\nExporting clone to", Fore.CYAN + f"/{out_path}")
-            out_f = Path(f"./{out_path}")
+            print(colorize("\nExporting clone to", 'success'), colorize(f"/{out_path}", "path"))
+            out_f = f"./{out_path}"
             aud.save_wav(gen_wav, out_f)
 
             rate, data = wavfile.read(out_path)
@@ -82,5 +82,5 @@ if __name__ == "__main__":
         # DEFINE OUTPUT TEXT FOR VOICE CLONE
         text = input("Enter text for voice clone:\n")
 
-        print('Synthesizing...')
+        print(colorize('Synthesizing...', 'success'))
         v.synthesize(text, 'output')
