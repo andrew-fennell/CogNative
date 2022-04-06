@@ -11,7 +11,7 @@ def test_invalid_language():
 
 def test_english():
     s = STT(source_language="english")
-    example_path = "examples/BillMaher22.wav"
+    example_path = "tests/examples/BillMaher22.wav"
     text = s.speech_to_text(example_path)
 
     actual_text = ("it wasn't really necessary I tried to "
@@ -30,7 +30,7 @@ def test_english():
     smoothie = SmoothingFunction().method4
     assert bleu([actual_text], text, smoothing_function=smoothie) > 0.9
 
-    example_path2 = "examples/DavidHowell15.wav"
+    example_path2 = "tests/examples/DavidHowell15.wav"
     text2 = s.speech_to_text(example_path2)
 
     actual_text2 = ("Once upon a time in a place not far "
