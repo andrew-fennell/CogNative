@@ -1,6 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-CogNative/models/__pycache__/
+*/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -111,6 +111,7 @@ ENV/
 env.bak/
 venv.bak/
 pyvenv/
+.vscode
 
 # Spyder project settings
 .spyderproject
@@ -131,8 +132,8 @@ dmypy.json
 .pyre/
 
 # Test audio
-CogNative/Clone_Tests/
 CogNative/backend/stt/examples/
+CogNative/examples/*
 
 # Saved models
 CogNative/models/RTVC/saved_models/default/

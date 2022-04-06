@@ -39,7 +39,7 @@ class RTVC:
         # SET FILE PATH
         self.file_path = file_path
         in_wav = Path(self.file_path)
-        assert os.path.exists(in_wav), colorize("ERROR: File not found.", 'error')
+        assert os.path.exists(in_wav), "ERROR: File not found."
 
         print(colorize("Loading requested file...", 'success'))
 
