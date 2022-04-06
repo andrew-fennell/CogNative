@@ -10,17 +10,27 @@ v = RTVC("models/RTVC/saved_models/default")
 
 # SET INPUT AUDIO FILE PATH
 file_path = Path(input("Enter input audio file path:\n"))
-assert file_path.exists(), "ERROR: Path not found."
-assert file_path.suffix == '.wav', "ERROR: Enter an input .wav file"
+if not file_path.exists():
+    print(colorize("ERROR: Path not found.", "error"))
+    exit(1)
+if not file_path.suffix == '.wav':
+    print(colorize("ERROR: Enter an input .wav file", "error"))
+    exit(1)
 
 # ENTER TEXT
 text = input("Enter text for voice clone:\n")
-assert text[-1] == ".", "ERROR: Punctuation missing."
+if not text[-1] == ".":
+    print(colorize("ERROR: Punctuation missing.", "error"))
+    exit(1)
 
 # OUTPUT FILE PATH
 output_path = Path(input("Enter output audio path:\n"))
-assert output_path.parent.exists(), "ERROR: Directory not found."
-assert output_path.suffix == '.wav', "ERROR: Enter an output .wav file"
+if not output_path.parent.exists():
+    print(colorize("ERROR: Directory not found.", "error"))
+    exit(1)
+if not output_path.suffix == '.wav':
+    print(colorize("ERROR: Enter an output .wav file", "error"))
+    exit(1)
 
 # ENCODE (sometimes this takes time, so it is after inputs)
 v.encode_voice(file_path)
