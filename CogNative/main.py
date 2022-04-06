@@ -3,9 +3,10 @@ from shutil import rmtree
 import wave
 
 from models.RTVC.RTVC import RTVC
+from models.RTVC.utils.printing import colorize
 
 # INITIALIZE RTVC
-#v = RTVC("models/RTVC/saved_models/default")
+v = RTVC("models/RTVC/saved_models/default")
 
 # SET INPUT AUDIO FILE PATH
 file_path = Path(input("Enter input audio file path:\n"))
@@ -38,14 +39,14 @@ if not temp_output_path.exists():
 out_paths = []
 
 # SYNTHESIZE OUTPUT AUDIO
-print('Synthesizing...')
+print(colorize('Synthesizing...', 'success'))
 for i, text in enumerate(input_subs):
-    out_path = f'{temp_output_path}/output' + str(i) + '.wav'
+    out_path = f'{str(temp_output_path)}/output' + str(i) + '.wav'
     v.synthesize(text + '.', out_path)
-    out_paths.append(out_path)
+    out_paths.append(str(out_path))
 
 # JOIN ALL SUB-AUDIO FILES INTO ONE OUTPUT .wav
-with wave.open(output_path, 'wb') as wav_out:
+with wave.open(str(output_path), 'wb') as wav_out:
     for i, wav_path in enumerate(out_paths):
         with wave.open(wav_path, 'rb') as wav_in:
             if i == 0:
@@ -54,3 +55,6 @@ with wave.open(output_path, 'wb') as wav_out:
 
 # REMOVE ALL TEMP FILES
 rmtree(temp_output_path)
+
+# PRINT SUCCESS
+print(colorize(f"Clone output to {output_path}", "success"))
