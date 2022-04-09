@@ -37,8 +37,25 @@ if not output_path.suffix == '.wav':
     print(colorize("ERROR: Enter an output .wav file", "error"))
     exit(1)
 
+v.set_file_path(file_path)
+
+embedding_path = None
+if Path(v.get_embedding_path()).exists():
+    embedding = input("Use embedding? (y/n)\n")
+    if embedding.lower() in ['y', 'yes']:
+        embedding_path = v.get_embedding_path()
+        if not Path(embedding_path).exists():
+            print(colorize(f"ERROR: Embedding file ({embedding_path}) not found.", "error"))
+            exit(1)
+        if not Path(embedding_path).suffix == '.ckpt':
+            print(colorize("ERROR: Enter a .ckpt embedding file", "error"))
+            exit(1)
+
 # ENCODE (sometimes this takes time, so it is after inputs)
-v.encode_voice(file_path)
+if embedding_path:
+    v.load_embedding(embedding_path)
+else:
+    v.encode_voice(file_path, save_embedding=True)
 
 # SEPARATE TEXT BY PERIOD
 input_subs = text.split('. ')
