@@ -19,10 +19,17 @@ import numpy as np
 import librosa
 import os
 
+lang = {
+    "english": "english_",
+    "spanish": "spanish_",
+    "swedish": "swedish_",
+    "german": "german_"
+}
+
 class RTVC:
-    def __init__(self, path_to_models):
+    def __init__(self, path_to_models, src_lang):
         # SET UP PRETRAINED MODEL PATHS
-        enc_weights = Path(path_to_models + "/encoder.pt")
+        enc_weights = Path(path_to_models + f"{lang[src_lang]}/encoder.pt")
         voc_weights = Path(path_to_models + "/vocoder.pt")
         synth_dir = Path(path_to_models + "/synthesizer.pt")
 
