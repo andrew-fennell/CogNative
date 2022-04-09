@@ -34,17 +34,17 @@ if not output_path.suffix == '.wav':
 
 v.set_file_path(file_path)
 
-embedding = input("Use embedding? (y/n)\n")
-if embedding.lower() in ['y', 'yes']:
-    embedding_path = v.get_embedding_path()
-    if not Path(embedding_path).exists():
-        print(colorize(f"ERROR: Embedding file ({embedding_path}) not found.", "error"))
-        exit(1)
-    if not Path(embedding_path).suffix == '.ckpt':
-        print(colorize("ERROR: Enter a .ckpt embedding file", "error"))
-        exit(1)
-else:
-    embedding_path = None
+embedding_path = None
+if Path(v.get_embedding_path()).exists():
+    embedding = input("Use embedding? (y/n)\n")
+    if embedding.lower() in ['y', 'yes']:
+        embedding_path = v.get_embedding_path()
+        if not Path(embedding_path).exists():
+            print(colorize(f"ERROR: Embedding file ({embedding_path}) not found.", "error"))
+            exit(1)
+        if not Path(embedding_path).suffix == '.ckpt':
+            print(colorize("ERROR: Enter a .ckpt embedding file", "error"))
+            exit(1)
 
 # ENCODE (sometimes this takes time, so it is after inputs)
 if embedding_path:
