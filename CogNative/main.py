@@ -29,7 +29,7 @@ synthesis_type = input("Synthesize from text or audio? (text/audio)\n")
 
 if synthesis_type.lower() == "audio":
     # INITIALIZE SPEECH_TRANSCRIPTION
-    st = speech_transcription(google_creds='credentials.json')
+    st = speech_transcription(google_creds='../credentials.json')
 
     # ENTER LANGUAGE OF AUDIO FILE
     audio_lang = input("Enter the audio's language:\n")
