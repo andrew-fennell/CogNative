@@ -4,16 +4,11 @@ import os
 import wave
 from google.cloud import speech
 
-
 from .languages import available_languages
 
-# Set GOOGLE_APPLICATION_CREDENTIALS if
-# it is not already set in the current environment
-if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
 
 class STT:
-    def __init__(self, source_language="english"):
+    def __init__(self, source_language="english", google_creds=None):
         """Speech-to-Text module that converts audio input to text output.
 
         Arguments:
@@ -23,6 +18,11 @@ class STT:
 
         if source_language not in available_languages.keys():
             raise (Exception("Please select a supported language."))
+        
+        # Set GOOGLE_APPLICATION_CREDENTIALS if
+        # it is not already set in the current environment
+        if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_creds
 
         # Variable initialization
         self.source_language = available_languages[source_language]["stt"]
