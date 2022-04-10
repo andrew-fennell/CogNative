@@ -53,8 +53,6 @@ class STT:
         # Saves text data associated with audio file path within the object
         self.stt_data[file_path] = text
 
-        print(text)
-
         return text
 
     def get_transcriptions(self):
