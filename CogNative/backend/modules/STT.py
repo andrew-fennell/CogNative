@@ -4,6 +4,7 @@ import os
 import wave
 from google.cloud import speech
 
+
 from .languages import available_languages
 
 # Set GOOGLE_APPLICATION_CREDENTIALS if

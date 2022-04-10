@@ -132,8 +132,8 @@ dmypy.json
 .pyre/
 
 # Test audio
-CogNative/backend/stt/examples/
-CogNative/examples/*
+CogNative/examples/*.wav
+CogNative/examples/saved_embeds/*.ckpt
 
 # Saved models
 CogNative/models/RTVC/saved_models/default/
