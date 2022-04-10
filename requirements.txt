@@ -2,6 +2,7 @@
 googletrans==4.0.0-rc1
 click==8.0.4
 colorama==0.4.4
+google-cloud-speech==2.13.1
 mypy-extensions==0.4.3
 pathspec==0.9.0
 platformdirs==2.5.1
