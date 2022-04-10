@@ -10,7 +10,6 @@ ws.geometry('400x200')
 
 def open_file():
     file_path = askopenfile(mode='r', filetypes=[('Audio Files', '*wav')])
-    #print(file_path.name)
     if file_path is not None:
         pass
 
