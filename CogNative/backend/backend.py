@@ -2,7 +2,7 @@ from .modules import STT, translation
 
 
 class speech_transcription:
-    def __init__(self, google_creds=None):
+    def __init__(self, google_creds='credentials.json'):
         # Instantiate variables
         self.data = {}
         self.google_creds = google_creds
