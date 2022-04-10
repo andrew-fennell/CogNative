@@ -5,23 +5,37 @@ Clone a voice and output speech in another language with the original voice.
 
 ## Installation
 
-Install Python3
+### 1. Install Python:
 
-Create virtual environment:
-```python3 -m venv pyvenv```
+  Python 3.9 is recommended.
 
-Activate virtual environment:
-Windows: ```./pyvenv/Scripts/activate```
-MacOS/Linux: ```source pyvenv/bin/activate```
+### 2. Create virtual environment (optional):
+  ```python3 -m venv pyvenv```
 
-Install required python3 packages:
+  Activate virtual environment:
+  Windows: ```./pyvenv/Scripts/activate```
+  MacOS/Linux: ```source pyvenv/bin/activate```
+
+  Deactivating the virtual environment:
+  ```deactivate```
+
+### 3. Install [ffmpeg](https://ffmpeg.org/download.html#get-packages). 
+
+Once installed, extract the folder and add ```<ffmpeg folder path>/bin``` to path.
+  
+### 4. Install [PyTorch](https://pytorch.org/get-started/locally/):
+  1. Pytorch Build: Stable (1.11.0).
+  2. Your OS: Pick the OS your environment is running CogNative in (Windows or Linux recommended).
+  3. Package: Pick what package installer you are using (pip recommended).
+  4. Language: Python.
+  5. Compute Platform: CUDA 11.3 recommended. If you don't have a GPU pick CPU.
+  
+### 5. Install required Python packages:
 ```pip3 install -r requirements.txt```
 
-All packages for the project will be installed in this virtual environment.
-When installing new packages or working on the project, you will need to activate the virtual environment.
+### 6. Install [models](https://drive.google.com/drive/folders/1fipYnvRT3vayNuGvhfuX1hL0ZC4mEAfs?usp=sharing).
 
-Deactivating the virtual environment:
-```deactivate```
+  Once installed, add the models (*.pt) to ```CogNative/CogNative/models/RTVC/saved_models/default```
 
 ## Contributing to the project
 
@@ -37,6 +51,22 @@ To style your code, please use the Black Python styler.
 
 Single file:    ```black <python-file-name>```
 All files:      ```black .```
+
+## Credit to Real-Time-Voice-Cloning
+
+This github repository serves as the foundation of our voice cloning module.
+
+[Real-Time-Voice-Cloning](https://github.com/CorentinJ/Real-Time-Voice-Cloning)
+
+See license [here](CogNative/models/RTVC/LICENSE.md).
+
+## Credit to noisereduce
+
+This github repository is used for noise reduction postprocessing on the synthesized output.
+
+[noisereduce](https://github.com/timsainb/noisereduce)
+
+See license [here](https://github.com/timsainb/noisereduce/blob/master/LICENSE)
 
 ## Team Members
 
