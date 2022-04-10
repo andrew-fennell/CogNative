@@ -19,10 +19,17 @@ import numpy as np
 import librosa
 import os
 
+lang = {
+    "english": "english_",
+    "spanish": "spanish_",
+    "swedish": "swedish_",
+    "german": "german_"
+}
+
 class RTVC:
-    def __init__(self, path_to_models):
+    def __init__(self, path_to_models, src_lang):
         # SET UP PRETRAINED MODEL PATHS
-        enc_weights = Path(path_to_models + "/encoder.pt")
+        enc_weights = Path(path_to_models + f"/{lang[src_lang]}encoder.pt")
         voc_weights = Path(path_to_models + "/vocoder.pt")
         synth_dir = Path(path_to_models + "/synthesizer.pt")
 
@@ -35,7 +42,11 @@ class RTVC:
         self.file_path = None
         self.embed = None
 
-    def encode_voice(self, file_path):
+    def encode_voice(self, file_path, save_embedding=False):
+        """Creating embedding for voice using encoder."""
+        if self.embed:
+            pass
+
         # SET FILE PATH
         self.file_path = file_path
         in_wav = Path(self.file_path)
@@ -50,8 +61,31 @@ class RTVC:
         # Use Encoder to create embedding of input audio
         embed_wav = audio.preprocess_wav(og_wav, sampling_rate)
         self.embed = encoder.embed_utterance(embed_wav)
-    
+        if save_embedding:
+            self.save_embedding()
+
+    def set_file_path(self, file_path):
+        # SET FILE PATH
+        self.file_path = file_path
+        in_wav = Path(self.file_path)
+        assert os.path.exists(in_wav), "ERROR: File not found."
+
+    def save_embedding(self):
+        """Save current embedding to a checkpoint file."""
+        np.savetxt(self.get_embedding_path(), self.embed)
+
+    def load_embedding(self, embedding_path):
+        """Load embedding from checkpoint file."""
+        self.embed = np.loadtxt(embedding_path, dtype=float)
+
+    def get_embedding_path(self):
+        """Returns the embedding file location."""
+        file_path_fmt = str(self.file_path).replace('/', ';').replace('\\', ';')
+        embedding_path = f"examples/saved_embeds/{file_path_fmt}.ckpt"
+        return embedding_path
+
     def synthesize(self, text, out_path):
+        """Synthesize output using synthesizer and vocoder."""
         with io.capture_output():
             specs = self.synthesizer.synthesize_spectrograms([text], [self.embed])
 
