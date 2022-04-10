@@ -137,3 +137,6 @@ CogNative/examples/*
 
 # Saved models
 CogNative/models/RTVC/saved_models/default/
+
+# Credentials
+credentials.json
