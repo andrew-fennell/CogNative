@@ -1,12 +1,8 @@
-import os
-
 import pytest
 from ....CogNative.backend.modules.STT import STT
 
 from nltk.translate import bleu
 from nltk.translate.bleu_score import SmoothingFunction
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
 
 
 def test_invalid_language():
