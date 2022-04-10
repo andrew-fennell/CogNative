@@ -19,10 +19,11 @@ class STT:
         if source_language not in available_languages.keys():
             raise (Exception("Please select a supported language."))
         
-        # Set GOOGLE_APPLICATION_CREDENTIALS if
-        # it is not already set in the current environment
-        if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_creds
+        if google_creds:
+            # Set GOOGLE_APPLICATION_CREDENTIALS if
+            # it is not already set in the current environment
+            if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
+                os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_creds
 
         # Variable initialization
         self.source_language = available_languages[source_language]["stt"]
