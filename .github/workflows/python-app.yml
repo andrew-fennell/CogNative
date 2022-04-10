@@ -40,9 +40,60 @@ jobs:
         client_email: ${{ secrets.CLIENT_EMAIL }}
         client_id: ${{ secrets.CLIENT_ID }}
         auth_uri: ${{ secrets.AUTH_URI }}
-        token_uri: ${{ secrets.token_uri }}
+        token_uri: ${{ secrets.TOKEN_URI }}
         auth_provider_x509_cert_url: ${{ secrets.AUTH_PROVIDER_X509_CERT_URL }}
         client_x509_cert_url: ${{ secrets.CLIENT_X509_CERT_URL }}
+    - name: Fix TYPE to type in credentials.json
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "TYPE"
+        replace: "type"
+        include: "**credentials.json"
+    - name: Change PROJECT_ID to project_id in credentials.json
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "PROJECT_ID"
+        replace: "project_id"
+    - name: Change PRIVATE_KEY_ID to private_key_id in credentials.json
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "PRIVATE_KEY_ID"
+        replace: "private_key_id"
+    - name: Change PRIVATE_KEY to private_key in credentials.json
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "PRIVATE_KEY"
+        replace: "private_key"
+    - name: Change CLIENT_EMAIL to client_email in credentials.json
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "CLIENT_EMAIL"
+        replace: "client_email"
+    - name: Change CLIENT_ID to client_id in credentials.json
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "CLIENT_ID"
+        replace: "client_id"
+    - name: Change AUTH_URI to auth_uri in credentials.json
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "AUTH_URI"
+        replace: "auth_uri"
+    - name: Change TOKEN_URI to token_uri in credentials.json
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "TOKEN_URI"
+        replace: "token_uri"
+    - name: Change AUTH_PROVIDER_X509_CERT_URL to auth_provider_x509_cert_url in credentials.json
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "AUTH_PROVIDER_X509_CERT_URL"
+        replace: "auth_provider_x509_cert_url"
+    - name: Change CLIENT_X509_CERT_URL to client_x509_cert_url in credentials.json
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "CLIENT_X509_CERT_URL"
+        replace: "client_x509_cert_url" 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
