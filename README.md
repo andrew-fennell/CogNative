@@ -39,7 +39,7 @@ Once installed, extract the folder and add ```<ffmpeg folder path>/bin``` to pat
 
 ### 7. Create Google Cloud credentials:
   1. Follow steps to setup [Google Cloud credentials](https://cloud.google.com/docs/authentication/getting-started).
-  2. Add Google Credentials to ```credentials.json``` in the top-level directory.
+  2. Add Google Credentials to ```credentials.json``` in the top-level directory. There is currently a file named ```credentials.json.template```, your ```credentials.json``` should match the key/value pairs shown there.
 
 ## Contributing to the project
 
