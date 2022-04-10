@@ -1,6 +1,6 @@
 import speech_recognition as sr
 
-from modules import languages
+from .languages import available_languages
 
 
 
@@ -13,11 +13,11 @@ class STT:
         engine -- Engine used to perform speech recognition
         """
 
-        if source_language not in languages.available_languages.keys():
+        if source_language not in available_languages.keys():
             raise (Exception("Please select a supported language."))
 
         # Variable initialization
-        self.source_language = languages.available_languages[source_language]["stt"]
+        self.source_language = available_languages[source_language]["stt"]
 
         # Speech Recognition initializations
         self.r = sr.Recognizer()
