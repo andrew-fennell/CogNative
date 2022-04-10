@@ -1,4 +1,4 @@
-﻿black==22.1.0
+black==22.1.0
 googletrans==4.0.0-rc1
 click==8.0.4
 colorama==0.4.4
