@@ -33,7 +33,7 @@ jobs:
       id: create-env
       with:
         file-name: 'credentials.json'
-        type: type
+        type: ${{ secrets.type }}
         project_id: ${{ secrets.project_id }}
         private_key_id: ${{ secrets.private_key_id }}
         private_key: ${{ secrets.private_key }}
