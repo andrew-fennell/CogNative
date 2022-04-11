@@ -1,4 +1,4 @@
-from modules import STT, translation
+from .modules import STT, translation
 
 
 class speech_transcription:
