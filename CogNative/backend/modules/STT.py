@@ -1,11 +1,11 @@
 import speech_recognition as sr
 
 from .languages import available_languages
-
+from langdetect import detect
 
 
 class STT:
-    def __init__(self, source_language="english"):
+    def __init__(self):
         """Speech-to-Text module that converts audio input to text output.
 
         Arguments:
@@ -13,11 +13,11 @@ class STT:
         engine -- Engine used to perform speech recognition
         """
 
-        if source_language not in available_languages.keys():
-            raise (Exception("Please select a supported language."))
+        # if source_language not in available_languages.keys():
+        #     raise (Exception("Please select a supported language."))
 
         # Variable initialization
-        self.source_language = available_languages[source_language]["stt"]
+        # self.source_language = available_languages[source_language]["stt"]
 
         # Speech Recognition initializations
         self.r = sr.Recognizer()
@@ -36,12 +36,13 @@ class STT:
             # Extract data from audio file
             data = self.r.record(source)
             # Generate text from audio
-            text = self.r.recognize_google(data, language=self.source_language)
+            text = self.r.recognize_google(data)
 
+        lang = detect(text)
         # Saves text data associated with audio file path within the object
         self.stt_data[file_path] = text
 
-        return text
+        return text, lang
 
     def get_transcriptions(self):
         """Returns all transcriptions performed by this object.
@@ -50,7 +51,6 @@ class STT:
         dict[file_path]: transcription of file_path
         """
         return self.stt_data
-
 
 if __name__ == "__main__":
 
