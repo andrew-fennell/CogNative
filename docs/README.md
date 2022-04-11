@@ -10,4 +10,5 @@ None
 None
 
 ## Hardware
-None
+[README](../CogNative/hardware/README.md)
+
