@@ -6,6 +6,10 @@ from google.cloud import speech
 
 from .languages import available_languages
 
+# Set GOOGLE_APPLICATION_CREDENTIALS if
+# it is not already set in the current environment
+if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
 
 class STT:
     def __init__(self, source_language="english", google_creds='credentials.json'):
