@@ -5,10 +5,12 @@ import wave
 from models.RTVC.RTVC import RTVC
 from models.RTVC.utils.printing import colorize
 
+from backend.backend import speech_transcription
+
 # INITIALIZE RTVC
 lang_check = input("Clone from foreign language? (y/n)\n")
 if lang_check == "y":
-    src_lang = input("Enter source language:\n")
+    src_lang = input("Enter source language:\n").lower()
 else:
     src_lang = "english"
 v = RTVC("models/RTVC/saved_models/default", src_lang)
@@ -22,11 +24,29 @@ if not file_path.suffix == '.wav':
     print(colorize("ERROR: Enter an input .wav file", "error"))
     exit(1)
 
-# ENTER TEXT
-text = input("Enter text for voice clone:\n")
-if not text[-1] == ".":
-    print(colorize("ERROR: Punctuation missing.", "error"))
-    exit(1)
+# PROMPT TEXT OR AUDIO INPUT
+synthesis_type = input("Synthesize from text or audio? (text/audio)\n").lower()
+
+if synthesis_type.lower() == "audio":
+    # INITIALIZE SPEECH_TRANSCRIPTION
+    st = speech_transcription(google_creds='../credentials.json')
+
+    # ENTER LANGUAGE OF AUDIO FILE
+    audio_lang = input("Enter the audio's language:\n").lower()
+
+    # ENTER AUDIO FOR STT
+    audio_path = Path(input("Enter the audio file path:\n"))
+    if not audio_path.exists():
+        print(colorize("ERROR: Path not found.", "error"))
+        exit(1)
+    if not audio_path.suffix == '.wav':
+        print(colorize("ERROR: Enter an input .wav file", "error"))
+        exit(1)
+    text = st.transcribe_audio(str(audio_path), audio_lang, 'english')
+
+else:
+    # ENTER TEXT
+    text = input("Enter text for voice clone:\n")
 
 # OUTPUT FILE PATH
 output_path = Path(input("Enter output audio path:\n"))
