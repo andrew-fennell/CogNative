@@ -10,5 +10,5 @@ None
 None
 
 ## Hardware
-[README](../CogNative/hardware/README.md)
+[README](https://github.com/andrew-fennell/CogNative/tree/main/CogNative/hardware/README.md)
 
