@@ -37,6 +37,10 @@ Once installed, extract the folder and add ```<ffmpeg folder path>/bin``` to pat
 
   Once installed, add the models (*.pt) to ```CogNative/CogNative/models/RTVC/saved_models/default```
 
+### 7. Create Google Cloud credentials:
+  1. Follow steps to setup [Google Cloud credentials](https://cloud.google.com/docs/authentication/getting-started).
+  2. Add Google Credentials to ```credentials.json``` in the top-level directory.
+
 ## Contributing to the project
 
 - Create your own branch ```git branch yourname-feature-name```

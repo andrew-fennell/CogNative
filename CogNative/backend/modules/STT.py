@@ -1,8 +1,16 @@
-import speech_recognition as sr
+import io
+import os
+
+import wave
+from google.cloud import speech
+
 
 from .languages import available_languages
 
-
+# Set GOOGLE_APPLICATION_CREDENTIALS if
+# it is not already set in the current environment
+if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
 
 class STT:
     def __init__(self, source_language="english"):
@@ -19,9 +27,6 @@ class STT:
         # Variable initialization
         self.source_language = available_languages[source_language]["stt"]
 
-        # Speech Recognition initializations
-        self.r = sr.Recognizer()
-
         # Data variables
         self.stt_data = {}
 
@@ -32,11 +37,24 @@ class STT:
         file_path -- audio file path (.wav, .flac, .aiff)
         """
 
-        with sr.AudioFile(file_path) as source:
-            # Extract data from audio file
-            data = self.r.record(source)
-            # Generate text from audio
-            text = self.r.recognize_google(data, language=self.source_language)
+        # Speech Recognition initializations
+        client = speech.SpeechClient()
+
+        with io.open(file_path, "rb") as audio_file:
+            content = audio_file.read()
+            audio = speech.RecognitionAudio(content=content)
+        
+        with wave.open(file_path) as audio_file:
+            num_chans = audio_file.getnchannels()
+        
+        config = speech.RecognitionConfig(language_code=self.source_language,
+                      enable_automatic_punctuation=True,
+                      audio_channel_count=num_chans,
+                      encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16)
+        
+        response = client.recognize(request={"config": config, "audio": audio})
+
+        text = response.results[0].alternatives[0].transcript
 
         # Saves text data associated with audio file path within the object
         self.stt_data[file_path] = text
