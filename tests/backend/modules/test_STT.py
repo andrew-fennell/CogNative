@@ -14,17 +14,17 @@ def test_english():
     example_path = "tests/examples/BillMaher22.wav"
     text = s.speech_to_text(example_path)
 
-    actual_text = ("it wasn't really necessary I tried to "
+    actual_text = ("It wasn't really necessary. I tried to "
                    "explain one night on my show that I "
                    "think a lot of this comes from he thinks"
-                   " he's the savior of the Russian people I"
-                   " think when you get to that level where "
-                   "he's been in office he's been an absolute"
-                   " power for 20 years what is left what "
-                   "you know what's in the soul of a man he "
+                   " he's the savior of the Russian people. I"
+                   " think, when you get to that level where "
+                   "he's been in office, he's been an absolute"
+                   " power for 20 years. Um, what is left what "
+                   "you know what's in the soul of a man? He "
                    "wants to be a hero and he thinks this is "
-                   "the way to do it I think people know "
-                   "this is history major stuff")
+                   "the way to do it I think people know, "
+                   "this is history major stuff.")
     
     # Check if synthesized text vs actual text is greater than 90%
     smoothie = SmoothingFunction().method4
@@ -33,12 +33,12 @@ def test_english():
     example_path2 = "tests/examples/DavidHowell15.wav"
     text2 = s.speech_to_text(example_path2)
 
-    actual_text2 = ("Once upon a time in a place not far "
-                    "from where you are standing there lived"
+    actual_text2 = ("Once upon a time, in a place not far "
+                    "from where you're standing, there lived"
                     " a community of farmers merchants "
-                    "blacksmiths strong women and a few others"
+                    "blacksmiths strong women, and a few others"
                     " who used the resources they had "
-                    "available to make life work")
+                    "available to make life work.")
     
     # Check if synthesized text vs actual text is greater than 90%
     assert bleu([actual_text2], text2, smoothing_function=smoothie) > 0.9

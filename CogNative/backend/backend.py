@@ -2,15 +2,16 @@ from .modules import STT, translation
 
 
 class speech_transcription:
-    def __init__(self):
+    def __init__(self, google_creds='credentials.json'):
         # Instantiate variables
         self.data = {}
+        self.google_creds = google_creds
 
     def transcribe_audio(self, audio_file_path, src_lang, dest_lang):
         """Convert audio in source language to text in destination language."""
 
         # Instantiate STT and Translation objects
-        stt = STT.STT(source_language=src_lang)
+        stt = STT.STT(source_language=src_lang, google_creds=self.google_creds)
         tr = translation.translation()
 
         # Convert audio file to text (in the same language)

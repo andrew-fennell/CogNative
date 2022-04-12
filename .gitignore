@@ -137,3 +137,6 @@ CogNative/examples/saved_embeds/*.ckpt
 
 # Saved models
 CogNative/models/RTVC/saved_models/default/
+
+# Credentials
+credentials.json
