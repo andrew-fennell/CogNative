@@ -18,15 +18,13 @@ Sentences translated into other languages: https://tatoeba.org/en/
 - english (US)
 - english-GB (UK)
 - english-AU (Australia)
-- japanese
-- chinese (Mandarin)
 - spanish (Mexico)
 - spanish-ES (Spain)
 - french
 - german
 - arabic (Saudi Arabia)
 - arabic (Iraq)
-- turkish
+- swedish
 
 ## Developer Note
 
