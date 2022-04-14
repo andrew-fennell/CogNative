@@ -8,6 +8,7 @@ from .models.RTVC.utils.printing import colorize
 from .backend.backend import speech_transcription
 from .backend.modules.languages import available_languages
 
+
 # INITIALIZE RTVC
 lang_check = input("Clone from foreign language? (y/n)\n")
 if lang_check == "y":
