@@ -92,8 +92,8 @@ v.set_file_path(file_path)
 # EMBEDDING PATH
 embedding_path = None
 if Path(v.get_embedding_path()).exists():
-    if '-useExistingEmbed' in args and args.index('-useExistingEmbed') < len(args):
-        embedding = args[args.index('-useExistingEmbed')+1].lower()
+    if '--useExistingEmbed' in args:
+        embedding = "y"
     else:
         embedding = input("Use embedding? (y/n)\n")
         
