@@ -1,6 +1,7 @@
 from pathlib import Path
 from shutil import rmtree
 import wave
+import re
 
 from .models.RTVC.RTVC import RTVC
 from .models.RTVC.utils.printing import colorize
@@ -8,7 +9,7 @@ from .models.RTVC.utils.printing import colorize
 from .backend.backend import speech_transcription
 
 # INITIALIZE RTVC
-lang_check = input("Clone from foreign language? (y/n)\n")
+lang_check = input("Clone from foreign language (source not English)? (y/n)\n")
 if lang_check == "y":
     src_lang = input("Enter source language:\n").lower()
 else:
@@ -47,7 +48,6 @@ if synthesis_type.lower() == "audio":
 else:
     # ENTER TEXT
     text = input("Enter text for voice clone:\n")
-
 # OUTPUT FILE PATH
 output_path = Path(input("Enter output audio path:\n"))
 if not output_path.parent.exists():
@@ -71,18 +71,31 @@ if Path(v.get_embedding_path()).exists():
             print(colorize("ERROR: Enter a .ckpt embedding file", "error"))
             exit(1)
 
+# SEPARATE TEXT BY PUNCTUATION
+punctuation_regex = '\. |\? |\! |\; |\: | \— |\—|\.\.\. |\.|\?|\!|\;|\:|\.\.\.'
+punctuation = re.findall(punctuation_regex, text)
+for i in range(0, len(punctuation)):
+    if punctuation[i][0] == " ":
+        punctuation[i] = punctuation[i] + "  "
+    if punctuation[i][-1] == " ":
+        punctuation[i] = punctuation[i] + "  "
+input_subs_split = re.split(punctuation_regex, text)
+input_subs_split.pop()
+
+# JOIN SENTENCES TO BE SYNTHESIZED TOGETHER
+input_subs = []
+for i in range(0, len(input_subs_split)):
+    input_subs.append(input_subs_split[i] + punctuation[i])
+input_subs_together = ""
+for i in range(0, len(input_subs)):
+    input_subs_together += input_subs[i]
+input_subs = [input_subs_together]
+
 # ENCODE (sometimes this takes time, so it is after inputs)
 if embedding_path:
     v.load_embedding(embedding_path)
 else:
     v.encode_voice(file_path, save_embedding=True)
-
-# SEPARATE TEXT BY PERIOD
-input_subs = text.split('. ')
-
-# JOIN <span> SENTENCES TO BE SYNTHESIZED TOGETHER
-span = 2
-input_subs = [". ".join(input_subs[i:i+span]) for i in range(0, len(input_subs), span)]
 
 # OUTPUT AUDIO FILE PATHS
 temp_output_path = Path('temp')
@@ -94,7 +107,7 @@ out_paths = []
 print(colorize('Synthesizing...', 'success'))
 for i, text in enumerate(input_subs):
     out_path = f'{str(temp_output_path)}/output' + str(i) + '.wav'
-    v.synthesize(text + '.', out_path)
+    v.synthesize(text, out_path)
     out_paths.append(str(out_path))
 
 # JOIN ALL SUB-AUDIO FILES INTO ONE OUTPUT .wav

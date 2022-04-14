@@ -100,7 +100,7 @@ class RTVC:
             aud.save_wav(gen_wav, out_f)
 
             rate, data = wavfile.read(out_path)
-            reduced_noise = nr.reduce_noise(y=data, sr=rate, prop_decrease=0.75)
+            reduced_noise = nr.reduce_noise(y=data, sr=rate, prop_decrease=0.7)
             wavfile.write(out_path, rate, reduced_noise)
 
 
