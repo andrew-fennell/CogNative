@@ -7,16 +7,28 @@ from models.RTVC.utils.printing import colorize
 
 from backend.backend import speech_transcription
 
+
+#GET ARGS
+#make args list containing only actual arguments
+args = sys.argv[1:]
+
 # INITIALIZE RTVC
-lang_check = input("Clone from foreign language? (y/n)\n")
-if lang_check == "y":
-    src_lang = input("Enter source language:\n").lower()
+if '-lang' in args and args.index('-lang') < len(args):
+	src_lang = args[args.index('-lang')+1].lower()
 else:
-    src_lang = "english"
+	lang_check = input("Clone from foreign language? (y/n)\n")
+	if lang_check == "y":
+		src_lang = input("Enter source language:\n").lower()
+	else:
+		src_lang = "english"
 v = RTVC("models/RTVC/saved_models/default", src_lang)
 
 # SET INPUT AUDIO FILE PATH
-file_path = Path(input("Enter input audio file path:\n"))
+if '-sampleAudio' in args and args.index('-sampleAudio') < len(args):
+	file_path = Path(args[args.index('-sampleAudio')+1])
+else:
+	file_path = Path(input("Enter input audio file path:\n"))
+	
 if not file_path.exists():
     print(colorize("ERROR: Path not found.", "error"))
     exit(1)
@@ -24,18 +36,28 @@ if not file_path.suffix == '.wav':
     print(colorize("ERROR: Enter an input .wav file", "error"))
     exit(1)
 
-# PROMPT TEXT OR AUDIO INPUT
-synthesis_type = input("Synthesize from text or audio? (text/audio)\n").lower()
+# CHOOSE TEXT OR AUDIO INPUT
+if '-synType' in args and args.index('-synType') < len(args):
+	synthesis_type = args[args.index('-synType')+1].lower()
+else:
+	synthesis_type = input("Synthesize from text or audio? (text/audio)\n").lower()
 
-if synthesis_type.lower() == "audio":
+if synthesis_type == "audio":
     # INITIALIZE SPEECH_TRANSCRIPTION
     st = speech_transcription(google_creds='../credentials.json')
 
-    # ENTER LANGUAGE OF AUDIO FILE
-    audio_lang = input("Enter the audio's language:\n").lower()
+    # CHOOSE LANGUAGE OF AUDIO FILE FOR DIALOGUE
+	if '-dialogueLang' in args and args.index('-dialogueLang') < len(args):
+		audio_lang = args[args.index('-dialogueLang')+1].lower()
+	else:
+		audio_lang = input("Enter the audio's language:\n").lower()
 
-    # ENTER AUDIO FOR STT
-    audio_path = Path(input("Enter the audio file path:\n"))
+    # CHOOSE AUDIO FOR STT
+	if '-dialogueAudio' in args and args.index('-dialogueAudio') < len(args):
+		audio_path = Path(args[args.index('-dialogueAudio')+1])
+	else:
+		audio_path = Path(input("Enter the audio file path:\n"))
+	
     if not audio_path.exists():
         print(colorize("ERROR: Path not found.", "error"))
         exit(1)
@@ -45,11 +67,18 @@ if synthesis_type.lower() == "audio":
     text = st.transcribe_audio(str(audio_path), audio_lang, 'english')
 
 else:
-    # ENTER TEXT
-    text = input("Enter text for voice clone:\n")
+    # CHOOSE TEXT
+	if '-dialogueText' in args and args.index('-dialogueText') < len(args):
+		text = args[args.index('-dialogueText')+1]
+	else:
+		text = input("Enter text for voice clone:\n")
 
 # OUTPUT FILE PATH
-output_path = Path(input("Enter output audio path:\n"))
+if '-out' in args and args.index('-out') < len(args):
+	output_path = Path(args[args.index('-out')+1])
+else:
+	output_path = Path(input("Enter output audio path:\n"))
+	
 if not output_path.parent.exists():
     print(colorize("ERROR: Directory not found.", "error"))
     exit(1)
@@ -59,9 +88,14 @@ if not output_path.suffix == '.wav':
 
 v.set_file_path(file_path)
 
+# EMBEDDING PATH
 embedding_path = None
 if Path(v.get_embedding_path()).exists():
-    embedding = input("Use embedding? (y/n)\n")
+	if '-useExistingEmbed' in args and args.index('-useExistingEmbed') < len(args):
+		embedding = args[args.index('-useExistingEmbed')+1].lower()
+	else:
+		embedding = input("Use embedding? (y/n)\n")
+		
     if embedding.lower() in ['y', 'yes']:
         embedding_path = v.get_embedding_path()
         if not Path(embedding_path).exists():
