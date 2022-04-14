@@ -2,10 +2,10 @@ from pathlib import Path
 from shutil import rmtree
 import wave
 
-from models.RTVC.RTVC import RTVC
-from models.RTVC.utils.printing import colorize
+from .models.RTVC.RTVC import RTVC
+from .models.RTVC.utils.printing import colorize
 
-from backend.backend import speech_transcription
+from .backend.backend import speech_transcription
 
 # INITIALIZE RTVC
 lang_check = input("Clone from foreign language? (y/n)\n")
@@ -13,7 +13,7 @@ if lang_check == "y":
     src_lang = input("Enter source language:\n").lower()
 else:
     src_lang = "english"
-v = RTVC("models/RTVC/saved_models/default", src_lang)
+v = RTVC("CogNative/models/RTVC/saved_models/default", src_lang)
 
 # SET INPUT AUDIO FILE PATH
 file_path = Path(input("Enter input audio file path:\n"))
