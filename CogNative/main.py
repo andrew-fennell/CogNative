@@ -2,14 +2,14 @@ from pathlib import Path
 from shutil import rmtree
 import wave
 
-from models.RTVC.RTVC import RTVC
-from models.RTVC.utils.printing import colorize
+from .models.RTVC.RTVC import RTVC
+from .models.RTVC.utils.printing import colorize
 
-from backend.backend import speech_transcription
+from .backend.backend import speech_transcription
 
 
-#GET ARGS
-#make args list containing only actual arguments
+# GET ARGS
+# make args list containing only actual arguments
 import sys
 args = sys.argv[1:]
 
@@ -22,7 +22,7 @@ else:
         src_lang = input("Enter source language:\n").lower()
     else:
         src_lang = "english"
-v = RTVC("models/RTVC/saved_models/default", src_lang)
+v = RTVC("CogNative/models/RTVC/saved_models/default", src_lang)
 
 # SET INPUT AUDIO FILE PATH
 if '-sampleAudio' in args and args.index('-sampleAudio') < len(args):
