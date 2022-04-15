@@ -2,6 +2,7 @@ from pathlib import Path
 from shutil import rmtree
 import wave
 import re
+from pydub import AudioSegment
 
 from .models.RTVC.RTVC import RTVC
 from .models.RTVC.utils.printing import colorize
@@ -74,11 +75,6 @@ if Path(v.get_embedding_path()).exists():
 # SEPARATE TEXT BY PUNCTUATION
 punctuation_regex = '\. |\? |\! |\; |\: | \— |\—|\.\.\. |\.|\?|\!|\;|\:|\.\.\.'
 punctuation = re.findall(punctuation_regex, text)
-for i in range(0, len(punctuation)):
-    if punctuation[i][0] == " ":
-        punctuation[i] = punctuation[i] + "  "
-    if punctuation[i][-1] == " ":
-        punctuation[i] = punctuation[i] + "  "
 input_subs_split = re.split(punctuation_regex, text)
 input_subs_split.pop()
 
@@ -86,10 +82,6 @@ input_subs_split.pop()
 input_subs = []
 for i in range(0, len(input_subs_split)):
     input_subs.append(input_subs_split[i] + punctuation[i])
-input_subs_together = ""
-for i in range(0, len(input_subs)):
-    input_subs_together += input_subs[i]
-input_subs = [input_subs_together]
 
 # ENCODE (sometimes this takes time, so it is after inputs)
 if embedding_path:
@@ -105,9 +97,14 @@ out_paths = []
 
 # SYNTHESIZE OUTPUT AUDIO
 print(colorize('Synthesizing...', 'success'))
+silence_to_cut = 600 #measured in ms
 for i, text in enumerate(input_subs):
     out_path = f'{str(temp_output_path)}/output' + str(i) + '.wav'
     v.synthesize(text, out_path)
+    audio_segment = AudioSegment.from_wav(out_path)
+    audio_segment_duration = audio_segment.duration_seconds
+    audio_segment_reduced = audio_segment[:(audio_segment_duration - silence_to_cut)]
+    audio_segment_reduced.export(out_path, format="wav")
     out_paths.append(str(out_path))
 
 # JOIN ALL SUB-AUDIO FILES INTO ONE OUTPUT .wav
