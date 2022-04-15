@@ -8,6 +8,7 @@ from .models.RTVC.RTVC import RTVC
 from .models.RTVC.utils.printing import colorize
 
 from .backend.backend import speech_transcription
+from .backend.modules.translation import translation
 
 
 # GET ARGS
@@ -49,12 +50,6 @@ if synthesis_type == "audio":
     # INITIALIZE SPEECH_TRANSCRIPTION
     st = speech_transcription(google_creds='../credentials.json')
 
-    # CHOOSE LANGUAGE OF AUDIO FILE FOR DIALOGUE
-    if '-dialogueLang' in args and args.index('-dialogueLang') < len(args):
-        audio_lang = args[args.index('-dialogueLang')+1].lower()
-    else:
-        audio_lang = input("Enter the audio's language:\n").lower()
-
     # CHOOSE AUDIO FOR STT
     if '-dialogueAudio' in args and args.index('-dialogueAudio') < len(args):
         audio_path = Path(args[args.index('-dialogueAudio')+1])
@@ -67,7 +62,8 @@ if synthesis_type == "audio":
     if not audio_path.suffix == '.wav':
         print(colorize("ERROR: Enter an input .wav file", "error"))
         exit(1)
-    text = st.transcribe_audio(str(audio_path), audio_lang, 'english')
+    
+    text = st.transcribe_audio(str(audio_path), dest_lang='english')
 
 else:
     # CHOOSE TEXT
@@ -75,6 +71,9 @@ else:
         text = args[args.index('-dialogueText')+1]
     else:
         text = input("Enter text for voice clone:\n")
+    
+    tr = translation()
+    text = tr.translate_to(text, 'english')
 
 # OUTPUT FILE PATH
 if '-out' in args and args.index('-out') < len(args):

@@ -12,16 +12,15 @@ if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
 
 class STT:
-    def __init__(self, source_language="english", google_creds='credentials.json'):
+    def __init__(self, google_creds='credentials.json'):
         """Speech-to-Text module that converts audio input to text output.
 
         Arguments:
-        source_language -- The language of the audio
-        engine -- Engine used to perform speech recognition
-        """
+        google_creds -- .json file with Google Cloud Speech credentials
 
-        if source_language not in available_languages.keys():
-            raise (Exception("Please select a supported language."))
+        Note: Language of previously transcribed audio can be found under
+                    the variable "STT.source_language".
+        """
 
         # Set GOOGLE_APPLICATION_CREDENTIALS if
         # it is not already set in the current environment
@@ -29,7 +28,7 @@ class STT:
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_creds
 
         # Variable initialization
-        self.source_language = available_languages[source_language]["stt"]
+        self.source_language = 'english'
 
         # Data variables
         self.stt_data = {}
@@ -47,11 +46,14 @@ class STT:
         with io.open(file_path, "rb") as audio_file:
             content = audio_file.read()
             audio = speech.RecognitionAudio(content=content)
-        
+
         with wave.open(file_path) as audio_file:
             num_chans = audio_file.getnchannels()
-        
-        config = speech.RecognitionConfig(language_code=self.source_language,
+
+        primary_lang = available_languages[self.source_language]["stt"]
+
+        config = speech.RecognitionConfig(language_code=primary_lang,
+                      alternative_language_codes=['en-US', 'es-MX', 'fr-FR', 'de-DE', 'sv-SE'],
                       enable_automatic_punctuation=True,
                       audio_channel_count=num_chans,
                       encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16)
@@ -59,6 +61,13 @@ class STT:
         response = client.recognize(request={"config": config, "audio": audio})
 
         text = response.results[0].alternatives[0].transcript
+        lang = response.results[0].language_code
+
+        lang_keys = list(available_languages.keys())
+        lang_codes = [available_languages[x]["stt"] for x in lang_keys]
+        for i in range(len(lang_codes)):
+            if lang_codes[i] == lang:
+                self.source_language = lang_keys[i]
 
         # Saves text data associated with audio file path within the object
         self.stt_data[file_path] = text
@@ -73,17 +82,13 @@ class STT:
         """
         return self.stt_data
 
-
 if __name__ == "__main__":
-
-    # Language that will be in the audio file
-    language = input("Enter your language (see backend/speech-to-text/README.md): ")
 
     # Enter an audio file
     audio_file = input("Input a audio file path: ")
 
     # Instantiate STT() object
-    s = STT(source_language=language)
+    s = STT()
 
     text = s.speech_to_text(audio_file)
     print(f"{audio_file}: {text}")
