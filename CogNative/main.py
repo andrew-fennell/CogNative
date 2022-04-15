@@ -1,6 +1,8 @@
 from pathlib import Path
 from shutil import rmtree
 import wave
+import re
+from pydub import AudioSegment
 
 from .models.RTVC.RTVC import RTVC
 from .models.RTVC.utils.printing import colorize
@@ -106,18 +108,22 @@ if Path(v.get_embedding_path()).exists():
             print(colorize("ERROR: Enter a .ckpt embedding file", "error"))
             exit(1)
 
+# SEPARATE TEXT BY PUNCTUATION
+punctuation_regex = '\. |\? |\! |\; |\: | \— |\—|\.\.\. |\.|\?|\!|\;|\:|\.\.\.'
+punctuation = re.findall(punctuation_regex, text)
+input_subs_split = re.split(punctuation_regex, text)
+input_subs_split.pop()
+
+# JOIN SENTENCES TO BE SYNTHESIZED TOGETHER
+input_subs = []
+for i in range(0, len(input_subs_split)):
+    input_subs.append(input_subs_split[i] + punctuation[i])
+
 # ENCODE (sometimes this takes time, so it is after inputs)
 if embedding_path:
     v.load_embedding(embedding_path)
 else:
     v.encode_voice(file_path, save_embedding=True)
-
-# SEPARATE TEXT BY PERIOD
-input_subs = text.split('. ')
-
-# JOIN <span> SENTENCES TO BE SYNTHESIZED TOGETHER
-span = 2
-input_subs = [". ".join(input_subs[i:i+span]) for i in range(0, len(input_subs), span)]
 
 # OUTPUT AUDIO FILE PATHS
 temp_output_path = Path('temp')
@@ -127,9 +133,14 @@ out_paths = []
 
 # SYNTHESIZE OUTPUT AUDIO
 print(colorize('Synthesizing...', 'success'))
+silence_to_cut = 600 #measured in ms
 for i, text in enumerate(input_subs):
     out_path = f'{str(temp_output_path)}/output' + str(i) + '.wav'
-    v.synthesize(text + '.', out_path)
+    v.synthesize(text, out_path)
+    audio_segment = AudioSegment.from_wav(out_path)
+    audio_segment_duration = audio_segment.duration_seconds
+    audio_segment_reduced = audio_segment[:(audio_segment_duration - silence_to_cut)]
+    audio_segment_reduced.export(out_path, format="wav")
     out_paths.append(str(out_path))
 
 # JOIN ALL SUB-AUDIO FILES INTO ONE OUTPUT .wav
