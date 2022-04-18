@@ -1,15 +1,14 @@
-# Importing library and their function
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 from colorama import Fore
 import os
 
-
+# user input for audio file + file existence check
 aud_file = input("Enter name of audio file: ")
 file_check = os.path.exists(f"Clone_Tests/Raw/{aud_file}.mp3")
 assert file_check, print(f"{Fore.YELLOW}Please move audio file to 'Clone_Tests/Raw/'")
 
-# reading from audio mp3 file
+# input audio file
 print(f"{Fore.LIGHTGREEN_EX}Audio file found. Loading audio file...")
 clip = AudioSegment.from_file(f"Clone_Tests/Raw/{aud_file}.mp3", format="mp3")
 
