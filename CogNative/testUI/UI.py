@@ -2,9 +2,11 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter.filedialog import askdirectory, askopenfile
 from time import sleep
+import subprocess
 
 from ..models.RTVC.RTVC import RTVC
 from ..backend.backend import speech_transcription
+from colorama import Fore
 
 ws = Tk()
 ws.title("CogNative")
@@ -63,9 +65,6 @@ def displayProgressBar():
         pb1["value"] += 20
         sleep(0.25)
     pb1.destroy()
-    Label(ws, text="File Prepared Successfully!", foreground="green").grid(
-        row=8, columnspan=3, pady=10
-    )
 
 
 def cloneVoice(src_lang_var, text_lang_var):
@@ -86,7 +85,59 @@ def cloneVoice(src_lang_var, text_lang_var):
 
     displayProgressBar()
 
-    print(data)
+    if data["text"]["text"]:
+        synType = "text"
+    else:
+        synType = "audio"
+
+    cmd = ['python', '-m', 'CogNative.main',
+           '-lang', data["input"]["src_lang"],
+           '-sampleAudio', data["input"]["audio_to_clone"],
+           '-synType', synType,
+           '-out', data["output"]["output_audio_path"],
+           '-useExistingEmbed', 'y'
+           ]
+    
+    if data["text"]["audio_to_transcribe"]:
+        cmd.append('-dialogueLang')
+        cmd.append(data["text"]["text_lang"])
+        cmd.append('-dialogueAudio')
+        cmd.append(data["text"]["audio_to_transcribe"])
+    else:
+        cmd.append('-dialogueText')
+        cmd.append(f'"{data["text"]["text"]}"')
+    
+    print("=============================================")
+    print(' '.join(cmd))
+    print("=============================================")
+
+    # Run the command to clone
+    process = subprocess.run(cmd, capture_output=True)
+
+    # Collect info on subprocess
+    stdout = process.stdout
+    
+    # Get the last line of the output
+    output = stdout.decode('utf-8').split('\n')[-2]
+
+    # Error prone way of stripping color (and symbols) off
+    # of the ouput and setting the tkinter display color
+    # that the label will use
+    if "ERROR" in output:
+        # Set color to display in UI
+        color = "red"
+        # Strip Fore colors off of the printed output
+        output = output.split(Fore.RED)[1].split(Fore.RESET)[0]
+    else:
+        # Set color to display in UI
+        color = "green"
+        # Strip Fore colors off of the printed output
+        output = output.split(Fore.LIGHTGREEN_EX)[1].split(Fore.RESET)[0]
+
+    Label(ws, text=output, foreground=color).grid(
+        row=8, columnspan=3, pady=10
+    )
+    print(f"last line of output: {output}")
 
 
 # ----- ROW 0 ----- #
