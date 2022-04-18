@@ -3,7 +3,11 @@ import os
 
 import wave
 from google.cloud import speech
+from pathlib import Path
+from shutil import rmtree
+from pydub import AudioSegment
 
+from ...models.RTVC.utils.printing import colorize
 from .languages import available_languages
 
 # Set GOOGLE_APPLICATION_CREDENTIALS if
@@ -66,13 +70,39 @@ class STT:
         lang_keys = list(available_languages.keys())
         lang_codes = [available_languages[x]["stt"] for x in lang_keys]
         for i in range(len(lang_codes)):
-            if lang_codes[i] == lang:
+            # Update self.source_language with the language
+            # used to transcribe the given audio
+            if lang_codes[i].split('-')[0] == lang.split('-')[0]:
                 self.source_language = lang_keys[i]
 
         # Saves text data associated with audio file path within the object
         self.stt_data[file_path] = text
 
         return text
+    
+    def detect_language(self, audio_path):
+        """Auto-detect language in a given audio file."""
+
+        if not Path(audio_path).suffix == '.wav':
+            print(colorize("ERROR: Enter an input .wav file", "error"))
+            exit(1)
+
+        temp_dir = Path('temp_detect')
+        if not temp_dir.exists():
+            temp_dir.mkdir()
+
+        audio = AudioSegment.from_wav(audio_path)
+        audio_duration = audio.duration_seconds*1000
+        duration = 25000 if audio_duration > 25000 else audio_duration
+        audio_reduced = audio[:duration]
+        audio_reduced.export(f"{str(temp_dir)}/detect.wav", format="wav")
+
+        self.speech_to_text(f"{str(temp_dir)}/detect.wav")
+
+        # REMOVE ALL TEMP FILES
+        rmtree(temp_dir)
+
+        return self.source_language
 
     def get_transcriptions(self):
         """Returns all transcriptions performed by this object.

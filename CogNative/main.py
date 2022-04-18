@@ -9,6 +9,7 @@ from .models.RTVC.utils.printing import colorize
 
 from .backend.backend import speech_transcription
 from .backend.modules.translation import translation
+from .backend.modules.STT import STT
 
 
 # GET ARGS
@@ -16,22 +17,20 @@ from .backend.modules.translation import translation
 import sys
 args = sys.argv[1:]
 
-# INITIALIZE RTVC
-if '-lang' in args and args.index('-lang') < len(args):
-    src_lang = args[args.index('-lang')+1].lower()
-else:
-    lang_check = input("Clone from foreign language? (y/n)\n")
-    if lang_check == "y":
-        src_lang = input("Enter source language:\n").lower()
-    else:
-        src_lang = "english"
-v = RTVC("CogNative/models/RTVC/saved_models/default", src_lang)
-
 # SET INPUT AUDIO FILE PATH
 if '-sampleAudio' in args and args.index('-sampleAudio') < len(args):
     file_path = Path(args[args.index('-sampleAudio')+1])
 else:
     file_path = Path(input("Enter input audio file path:\n"))
+
+# DETECT LANGUAGE OF INPUT AUDIO
+st_detect = STT()
+src_lang = st_detect.detect_language(file_path)
+
+# INITIALIZE RTVC
+print("================================================")
+v = RTVC("CogNative/models/RTVC/saved_models/default", src_lang)
+print("================================================")
     
 if not file_path.exists():
     print(colorize("ERROR: Path not found.", "error"))
