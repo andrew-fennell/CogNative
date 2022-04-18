@@ -136,7 +136,7 @@ CogNative/examples/*.wav
 CogNative/examples/saved_embeds/*.ckpt
 
 # Saved models
-CogNative/models/RTVC/saved_models/default/
+CogNative/models/RTVC/saved_models/default/*.pt
 
 # Credentials
 credentials.json
