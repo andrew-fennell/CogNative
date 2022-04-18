@@ -23,8 +23,6 @@ if '-sampleAudio' in args and args.index('-sampleAudio') < len(args):
 else:
     file_path = Path(input("Enter input audio file path:\n"))
 
-file_path = "CogNative/examples/TCOC40.wav"
-
 # DETECT LANGUAGE OF INPUT AUDIO
 st_detect = STT()
 src_lang = st_detect.detect_language(file_path)
