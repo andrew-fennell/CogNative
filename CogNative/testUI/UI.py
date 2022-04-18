@@ -3,9 +3,9 @@ from tkinter.ttk import *
 from tkinter.filedialog import askdirectory, askopenfile
 from time import sleep
 import subprocess
+import threading
 
-from ..models.RTVC.RTVC import RTVC
-from ..backend.backend import speech_transcription
+from ..models.RTVC.utils.printing import colorize
 from colorama import Fore
 
 ws = Tk()
@@ -14,47 +14,42 @@ ws.geometry("800x400")
 
 data = {
     "input": {
-        "src_lang": None,
         "audio_to_clone": None,
         "use_embedding": None,
     },
     "text": {
         "audio_to_transcribe": None,
-        "text_lang": None,
         "text": None,
     },
     "output": {
         "output_audio_path": None,
+        "output_dir": ""
     },
 }
 
-# Dropdown menu options
-lang_options = [
-    "english",  # default option
-    "english",
-    "spanish",
-    "swedish",
-    "german",
-]
+output_dir = ""
 
+# Variable tracks whether the program is currently
+# running a clone process
+global run_lock
+run_lock = False
 
 def open_file(file_type, file_name, label=None):
     data[file_type][file_name] = askopenfile(
         mode="r", filetypes=[("Audio Files", "*wav")]
     ).name
 
-    if label:
-        label.config(text=data[file_type][file_name])
-
 
 def save_path(file_type, file_name, label=None):
     data[file_type][file_name] = askdirectory()
-    if label:
-        label.config(text=data[file_type][file_name])
+
+    # Set output file path
+    output_dir = data["output"]["output_dir"]
+    output_dir_lbl.config(text=f"{output_dir}/{output_name_entry.get()}")
 
 
 def buttonHandle():
-    cloneVoice(src_lang_var, text_lang_var)
+    cloneVoice()
 
 
 def displayProgressBar():
@@ -67,78 +62,106 @@ def displayProgressBar():
     pb1.destroy()
 
 
-def cloneVoice(src_lang_var, text_lang_var):
-    data["input"]["src_lang"] = src_lang_var.get()
+def cloneVoice():
     data["input"]["use_embedding"] = embed_check.get()
-
-    data["text"]["text_lang"] = text_lang_var.get()
     data["text"]["text"] = text_synthesize_entry.get()
 
-    # If the path has been set already because the directory was selected
-    if data["output"]["output_audio_path"]:
-        data["output"]["output_audio_path"] = (
-            data["output"]["output_audio_path"] + "/" + output_name_entry.get()
-        )
-    # If it hasn't set directory to file name
-    else:
-        data["output"]["output_audio_path"] = output_name_entry.get()
-
-    displayProgressBar()
-
-    if data["text"]["text"]:
-        synType = "text"
-    else:
-        synType = "audio"
+    output_dir = data["output"]["output_dir"]
+    data["output"]["output_audio_path"] = f"{output_dir}/{output_name_entry.get()}"
+    output_dir_lbl.config(text=data["output"]["output_audio_path"])
 
     cmd = ['python', '-m', 'CogNative.main',
-           '-lang', data["input"]["src_lang"],
            '-sampleAudio', data["input"]["audio_to_clone"],
-           '-synType', synType,
            '-out', data["output"]["output_audio_path"],
            '-useExistingEmbed', 'y'
            ]
     
     if data["text"]["audio_to_transcribe"]:
-        cmd.append('-dialogueLang')
-        cmd.append(data["text"]["text_lang"])
         cmd.append('-dialogueAudio')
         cmd.append(data["text"]["audio_to_transcribe"])
-    else:
+        cmd.append('-synType')
+        cmd.append('audio')
+    elif data["text"]["text"]:
         cmd.append('-dialogueText')
         cmd.append(f'"{data["text"]["text"]}"')
-    
-    print("=============================================")
-    print(' '.join(cmd))
-    print("=============================================")
-
-    # Run the command to clone
-    process = subprocess.run(cmd, capture_output=True)
-
-    # Collect info on subprocess
-    stdout = process.stdout
-    
-    # Get the last line of the output
-    output = stdout.decode('utf-8').split('\n')[-2]
-
-    # Error prone way of stripping color (and symbols) off
-    # of the ouput and setting the tkinter display color
-    # that the label will use
-    if "ERROR" in output:
-        # Set color to display in UI
-        color = "red"
-        # Strip Fore colors off of the printed output
-        output = output.split(Fore.RED)[1].split(Fore.RESET)[0]
+        cmd.append('-synType')
+        cmd.append('text')
     else:
-        # Set color to display in UI
-        color = "green"
-        # Strip Fore colors off of the printed output
-        output = output.split(Fore.LIGHTGREEN_EX)[1].split(Fore.RESET)[0]
+        print(colorize("Missing text to synthesize.", "error"))
+        raise Exception("Must enter text or audio to be synthesized.")
 
-    Label(ws, text=output, foreground=color).grid(
-        row=8, columnspan=3, pady=10
-    )
-    print(f"last line of output: {output}")
+    def run_main():
+        global run_lock
+        if not run_lock:
+            run_lock = True
+            try:
+                print("=============================================")
+                print(' '.join(cmd))
+                print("=============================================")
 
+                # Set status label
+                status_lbl = Label(ws, text="Cloning voice...").grid(
+                    row=8, columnspan=3, pady=10
+                )
+            except Exception:
+                run_lock = False
+                print(colorize("Missing input.", "error"))
+            
+            try:
+                # Run the command to clone
+                process = subprocess.run(cmd, capture_output=True)
+            except Exception:
+                run_lock = False
+                print(colorize("Error in main.", "error"))
+                raise Exception
+
+            try:
+                # Collect info on subprocess
+                stdout = process.stdout
+
+                # Get the last line of the output
+                output = stdout.decode('utf-8').split('\n')[-2]
+
+                # Strip Fore colors off of the printed output
+                # IF the Fore information is contained in the output
+                if Fore.LIGHTGREEN_EX in output:
+                    color = "green"
+                    output = output.split(Fore.LIGHTGREEN_EX)[1]
+                elif Fore.RED in output:
+                    color = "red"
+                    output = output.split(Fore.RED)[1]
+                elif Fore.YELLOW in output:
+                    color = "yellow"
+                    output = output.split(Fore.YELLOW)[1]
+                elif Fore.CYAN in output:
+                    color = "blue"
+                    output = output.split(Fore.CYAN)[1]
+                else:
+                    color = "red"
+
+                # If there is a Fore.RESET, strip it off too
+                if Fore.RESET in output:
+                    output = output.split(Fore.RESET)[0]
+
+                # Set status label to output
+                status_lbl = Label(ws, text=output, foreground=color).grid(
+                    row=8, columnspan=3, pady=10
+                )
+                print(f"last line of output: {output}")
+            except Exception:
+                run_lock = False
+                print(colorize("Error while processing stdout.", "error"))
+                raise Exception
+
+            run_lock = False
+        else:
+            locked_error = "ERROR: Another voice is already being cloned right now."
+            print(colorize(locked_error, "error"))
+
+    thr = threading.Thread(target=run_main)
+    thr.daemon = True # close pipe if GUI exits
+    # Run main, given the user inputs
+    thr.start()
 
 # ----- ROW 0 ----- #
 input_audio_lbl = Label(ws, text="Select voice to clone:")
@@ -149,16 +172,6 @@ input_audio_btn = Button(
 )
 input_audio_btn.grid(row=0, column=1, pady=20)
 
-# datatype of menu text
-src_lang_var = StringVar()
-
-# initial menu text
-src_lang_var.set("english")
-
-# Create Dropdown menu
-drop = OptionMenu(ws, src_lang_var, *lang_options)
-drop.grid(row=0, column=2, pady=20)
-
 embed_check = IntVar()
 embed_check_box = Checkbutton(
     ws,
@@ -167,7 +180,7 @@ embed_check_box = Checkbutton(
     onvalue=1,
     offvalue=0,
 )
-embed_check_box.grid(row=0, column=3, pady=20)
+embed_check_box.grid(row=0, column=2, pady=20)
 
 # ----- ROW 1 ----- #
 text_lang_lbl = Label(ws, text="Text to synthesize:")
@@ -184,16 +197,6 @@ audio_to_transcribe_btn = Button(
 )
 audio_to_transcribe_btn.grid(row=1, column=3, pady=20)
 
-# datatype of menu text
-text_lang_var = StringVar()
-
-# initial menu text
-text_lang_var.set("english")
-
-# Create Dropdown menu
-drop = OptionMenu(ws, text_lang_var, *lang_options)
-drop.grid(row=1, column=4, pady=20)
-
 
 # ----- ROW 2 ----- #
 output_path_lbl = Label(ws, text="Output file name:")
@@ -208,7 +211,7 @@ output_path_lbl.grid(row=2, column=2, padx=10, pady=20)
 output_path_btn = Button(
     ws,
     text="Choose Directory",
-    command=lambda: save_path("output", "output_audio_path", output_dir_lbl),
+    command=lambda: save_path("output", "output_dir", output_dir_lbl),
 )
 output_path_btn.grid(row=2, column=3, pady=20)
 
@@ -222,5 +225,10 @@ output_dir_lbl.grid(row=3, column=1, columnspan=2, padx=20, pady=20)
 # ----- ROW 4 ----- #
 upld = Button(ws, text="Clone voice", command=buttonHandle)
 upld.grid(row=4, columnspan=3, pady=20, padx=20)
+
+# ----- ROW 8 ----- #
+status_lbl = Label(ws, text="").grid(
+    row=8, columnspan=3, pady=10
+)
 
 ws.mainloop()
