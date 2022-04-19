@@ -41,6 +41,50 @@ Once installed, extract the folder and add ```<ffmpeg folder path>/bin``` to pat
   1. Follow steps to setup [Google Cloud credentials](https://cloud.google.com/docs/authentication/getting-started).
   2. Add Google Credentials to ```credentials.json``` in the top-level directory. There is currently a file named ```credentials.json.template```, your ```credentials.json``` should match the key/value pairs shown there.
 
+## Usage
+Start from the CogNative root directory.
+
+### GUI
+To launch GUI, run ```python -m CogNative.testUI.UI```
+
+### CLI
+Any necessary flags which are not specified will cause a prompt to be generated which must be answered before continuing. Examples follow.
+
+1) Display Help Message: ``` python -m CogNative.main -help ```
+```
+CogNative CLI FLags:
+    -sampleAudio <PATH>: audio file of voice to copy
+    -synType <text, audio>: synthesis mode either given input text or by transcribing audio file
+    [-dialogueAudio] <PATH>: for audio synType, audio file of dialogue to speak
+    [-dialogueText] <PATH>: for text synType, text string of dialogue to speak
+    -out <PATH>: output audio file path
+    -useExistingEmbed <y/yes/n/no>: Uses saved embedding of previously used voice samples if enabled and present.
+```
+2) Generate cloned voice from sample voice and text input:
+    ``` python -m CogNative.main -sampleAudio CogNative/examples/MatthewM66.wav -synType text -dialogueText "The turbo-encabulator has now reached a high level of development, and it's being successfully used in the operation of novertrunnions." -out cmdExampleText.wav -useExistingEmbed y ```
+``` 
+Loaded encoder "english_encoder.pt" trained to step 1564501
+Synthesizer using device: cuda
+Building Wave-RNN
+Trainable Parameters: 4.481M
+Loading model weights at CogNative\models\RTVC\saved_models\default\vocoder.pt
+Synthesizing...
+Clone output to cmdExampleText.wav
+``` 
+
+3) Generate cloned voice from sample voice and audio input file: 
+    ``` python -m CogNative.main -sampleAudio CogNative\examples\MatthewM66.wav -synType audio -dialogueAudio CogNative\examples\BillMaher22.wav -out cmdExampleAudio.wav -useExistingEmbed n ```
+```
+Loaded encoder "english_encoder.pt" trained to step 1564501
+Synthesizer using device: cuda
+Building Wave-RNN
+Trainable Parameters: 4.481M
+Loading model weights at CogNative\models\RTVC\saved_models\default\vocoder.pt
+Loading requested file...
+Synthesizing...
+Clone output to cmdExampleAudio.wav
+```
+
 ## Contributing to the project
 
 - Create your own branch ```git branch yourname-feature-name```
