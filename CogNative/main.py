@@ -1,11 +1,15 @@
 from pathlib import Path
 from shutil import rmtree
 import wave
+import re
+from pydub import AudioSegment
 
 from .models.RTVC.RTVC import RTVC
 from .models.RTVC.utils.printing import colorize
 
 from .backend.backend import speech_transcription
+from .backend.modules.translation import translation
+from .backend.modules.STT import STT
 
 
 # GET ARGS
@@ -13,8 +17,7 @@ from .backend.backend import speech_transcription
 import sys
 args = sys.argv[1:]
 
-
-#-help flag displays help instead of processing anything
+# -help flag displays help instead of processing anything
 if '-help' in args:
     print("""
 CogNative CLI FLags: 
@@ -27,22 +30,20 @@ CogNative CLI FLags:
 """)
     exit(0)
 
-# INITIALIZE RTVC
-if '-lang' in args and args.index('-lang') < len(args):
-    src_lang = args[args.index('-lang')+1].lower()
-else:
-    lang_check = input("Clone from foreign language? (y/n)\n")
-    if lang_check == "y":
-        src_lang = input("Enter source language:\n").lower()
-    else:
-        src_lang = "english"
-v = RTVC("CogNative/models/RTVC/saved_models/default", src_lang)
-
 # SET INPUT AUDIO FILE PATH
 if '-sampleAudio' in args and args.index('-sampleAudio') < len(args):
     file_path = Path(args[args.index('-sampleAudio')+1])
 else:
     file_path = Path(input("Enter input audio file path:\n"))
+
+# DETECT LANGUAGE OF INPUT AUDIO
+st_detect = STT()
+src_lang = st_detect.detect_language(file_path)
+
+# INITIALIZE RTVC
+print("================================================")
+v = RTVC("CogNative/models/RTVC/saved_models/default", src_lang)
+print("================================================")
     
 if not file_path.exists():
     print(colorize("ERROR: Path not found.", "error"))
@@ -61,12 +62,6 @@ if synthesis_type == "audio":
     # INITIALIZE SPEECH_TRANSCRIPTION
     st = speech_transcription(google_creds='../credentials.json')
 
-    # CHOOSE LANGUAGE OF AUDIO FILE FOR DIALOGUE
-    if '-dialogueLang' in args and args.index('-dialogueLang') < len(args):
-        audio_lang = args[args.index('-dialogueLang')+1].lower()
-    else:
-        audio_lang = input("Enter the audio's language:\n").lower()
-
     # CHOOSE AUDIO FOR STT
     if '-dialogueAudio' in args and args.index('-dialogueAudio') < len(args):
         audio_path = Path(args[args.index('-dialogueAudio')+1])
@@ -79,7 +74,8 @@ if synthesis_type == "audio":
     if not audio_path.suffix == '.wav':
         print(colorize("ERROR: Enter an input .wav file", "error"))
         exit(1)
-    text = st.transcribe_audio(str(audio_path), audio_lang, 'english')
+    
+    text = st.transcribe_audio(str(audio_path), dest_lang='english')
 
 else:
     # CHOOSE TEXT
@@ -87,6 +83,9 @@ else:
         text = args[args.index('-dialogueText')+1]
     else:
         text = input("Enter text for voice clone:\n")
+        
+    tr = translation()
+    text = tr.translate_to(text, 'english')
 
 # OUTPUT FILE PATH
 if '-out' in args and args.index('-out') < len(args):
@@ -120,18 +119,22 @@ if Path(v.get_embedding_path()).exists():
             print(colorize("ERROR: Enter a .ckpt embedding file", "error"))
             exit(1)
 
+# SEPARATE TEXT BY PUNCTUATION
+punctuation_regex = '\. |\? |\! |\; |\: | \— |\—|\.\.\. |\.|\?|\!|\;|\:|\.\.\.'
+punctuation = re.findall(punctuation_regex, text)
+input_subs_split = re.split(punctuation_regex, text)
+input_subs_split.pop()
+
+# JOIN SENTENCES TO BE SYNTHESIZED TOGETHER
+input_subs = []
+for i in range(0, len(input_subs_split)):
+    input_subs.append(input_subs_split[i] + punctuation[i])
+
 # ENCODE (sometimes this takes time, so it is after inputs)
 if embedding_path:
     v.load_embedding(embedding_path)
 else:
     v.encode_voice(file_path, save_embedding=True)
-
-# SEPARATE TEXT BY PERIOD
-input_subs = text.split('. ')
-
-# JOIN <span> SENTENCES TO BE SYNTHESIZED TOGETHER
-span = 2
-input_subs = [". ".join(input_subs[i:i+span]) for i in range(0, len(input_subs), span)]
 
 # OUTPUT AUDIO FILE PATHS
 temp_output_path = Path('temp')
@@ -141,9 +144,14 @@ out_paths = []
 
 # SYNTHESIZE OUTPUT AUDIO
 print(colorize('Synthesizing...', 'success'))
+silence_to_cut = 600 #measured in ms
 for i, text in enumerate(input_subs):
     out_path = f'{str(temp_output_path)}/output' + str(i) + '.wav'
-    v.synthesize(text + '.', out_path)
+    v.synthesize(text, out_path)
+    audio_segment = AudioSegment.from_wav(out_path)
+    audio_segment_duration = audio_segment.duration_seconds
+    audio_segment_reduced = audio_segment[:(audio_segment_duration - silence_to_cut)]
+    audio_segment_reduced.export(out_path, format="wav")
     out_paths.append(str(out_path))
 
 # JOIN ALL SUB-AUDIO FILES INTO ONE OUTPUT .wav
