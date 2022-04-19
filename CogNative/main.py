@@ -17,6 +17,19 @@ from .backend.modules.STT import STT
 import sys
 args = sys.argv[1:]
 
+# -help flag displays help instead of processing anything
+if '-help' in args:
+    print("""
+CogNative CLI FLags: 
+    -sampleAudio <PATH>: audio file of voice to clone
+    -synType <text, audio>: synthesis mode either given input text or by transcribing audio file
+    [-dialogueAudio] <PATH>: for audio synType, audio file of dialogue to speak
+    [-dialogueText] <TEXT>: for text synType, text string of dialogue to speak
+    -out <PATH>: output audio file path
+    -useExistingEmbed <y/yes/n/no>: Uses saved embedding of previously used voice samples if enabled and present.
+""")
+    exit(0)
+
 # SET INPUT AUDIO FILE PATH
 if '-sampleAudio' in args and args.index('-sampleAudio') < len(args):
     file_path = Path(args[args.index('-sampleAudio')+1])
@@ -70,7 +83,7 @@ else:
         text = args[args.index('-dialogueText')+1]
     else:
         text = input("Enter text for voice clone:\n")
-    
+        
     tr = translation()
     text = tr.translate_to(text, 'english')
 
