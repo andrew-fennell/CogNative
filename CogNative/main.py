@@ -13,6 +13,20 @@ from .backend.backend import speech_transcription
 import sys
 args = sys.argv[1:]
 
+
+#-help flag displays help instead of processing anything
+if '-help' in args:
+    print("""
+CogNative CLI FLags: 
+    -sampleAudio <PATH>: audio file of voice to copy
+    -synType <text, audio>: synthesis mode either given input text or by transcribing audio file
+    [-dialogueAudio] <PATH>: for audio synType, audio file of dialogue to speak
+    [-dialogueText] <TEXT>: for text synType, text string of dialogue to speak
+    -out <PATH>: output audio file path
+    -useExistingEmbed <y/yes/n/no>: Uses saved embedding of previously used voice samples if enabled and present.
+""")
+    exit(0)
+
 # INITIALIZE RTVC
 if '-lang' in args and args.index('-lang') < len(args):
     src_lang = args[args.index('-lang')+1].lower()
