@@ -53,7 +53,7 @@ Any necessary flags which are not specified will cause a prompt to be generated 
 1) Display Help Message: ``` python -m CogNative.main -help ```
 ```
 CogNative CLI FLags:
-    -sampleAudio <PATH>: audio file of voice to copy
+    -sampleAudio <PATH>: audio file of voice to clone
     -synType <text, audio>: synthesis mode either given input text or by transcribing audio file
     [-dialogueAudio] <PATH>: for audio synType, audio file of dialogue to speak
     [-dialogueText] <PATH>: for text synType, text string of dialogue to speak
