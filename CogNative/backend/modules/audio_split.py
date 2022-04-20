@@ -114,21 +114,21 @@ def split_audio(audio_path, optimize=False):
     audio_chunks = []
     extra = 0
     for chunk in audio_chunks_ini:
-        #print(f"Chunk {len(audio_chunks)}/{len(audio_chunks_ini)+extra}")
-
         # If the clip is too long, split into smaller clips
         if len(chunk) > 45000:
             # split_chunk ensures that chunks in split_smaller will be
             # less than 45 seconds
             split_smaller = split_chunk(chunk, silence_len_thresh)
             for smaller_chunk in split_smaller:
-                extra += 1
-                audio_chunks.append(smaller_chunk)
+                if len(smaller_chunk) >= 1000:
+                    extra += 1
+                    audio_chunks.append(smaller_chunk)
             # break out of this loop
             continue
         
         # Add chunk to audio_chunks
-        audio_chunks.append(chunk)
+        if len(chunk) >= 1000:
+            audio_chunks.append(chunk)
 
     # remove directory if it already exists
     file_name_path = Path(audio_path).with_suffix("")
