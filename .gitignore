@@ -132,6 +132,7 @@ dmypy.json
 .pyre/
 
 # Test audio
+CogNative/examples/*/
 CogNative/examples/*.wav
 CogNative/examples/saved_embeds/*.ckpt
 

@@ -52,7 +52,7 @@ class RTVC:
         in_wav = Path(self.file_path)
         assert os.path.exists(in_wav), "ERROR: File not found."
 
-        print(colorize("Loading requested file...", 'success'))
+        print(colorize("Encoding voice...", 'success'))
 
         # SYNTHESIZE EXPECTED OUTPUT WAVEFORM
         enc_wav = audio.preprocess_wav(in_wav)
