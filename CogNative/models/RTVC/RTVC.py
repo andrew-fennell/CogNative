@@ -80,7 +80,7 @@ class RTVC:
 
     def get_embedding_path(self):
         """Returns the embedding file location."""
-        file_path_fmt = str(self.file_path).replace('/', ';').replace('\\', ';')
+        file_path_fmt = str(self.file_path).replace('\\', '/').split('/')[-1]
         embedding_path = f"CogNative/examples/saved_embeds/{file_path_fmt}.ckpt"
         return embedding_path
 
