@@ -3,6 +3,7 @@ from shutil import rmtree
 import wave
 import re
 from pydub import AudioSegment
+from datetime import datetime
 
 from .models.RTVC.RTVC import RTVC
 from .models.RTVC.utils.printing import colorize
@@ -154,15 +155,28 @@ out_paths = []
 
 # SYNTHESIZE OUTPUT AUDIO
 print(colorize('Synthesizing...', 'success'))
+start_time = datetime.now()
 silence_to_cut = 600 #measured in ms
 for i, text in enumerate(input_subs):
+    # Synthesize this chunk
     out_path = f'{str(temp_output_path)}/output' + str(i) + '.wav'
     v.synthesize(text, out_path)
     audio_segment = AudioSegment.from_wav(out_path)
+
+    # Adjust the silence at the end of the synthesis
     audio_segment_duration = audio_segment.duration_seconds
     audio_segment_reduced = audio_segment[:(audio_segment_duration - silence_to_cut)]
+
+    # Explort to out_path
     audio_segment_reduced.export(out_path, format="wav")
     out_paths.append(str(out_path))
+
+    # Print which (i) audio path is being synthesized
+    percent_complete = round(100 * (i+1) / len(input_subs), 2)
+    time_since_start = datetime.now() - start_time
+    time_remaining = (1 / (percent_complete / 100)) * time_since_start - time_since_start
+    time_remaining = str(time_remaining).split('.')[0]
+    print(f"Synthesizing: [{percent_complete}%] ({time_remaining} remaining)")
 
 # JOIN ALL SUB-AUDIO FILES INTO ONE OUTPUT .wav
 with wave.open(str(output_path), 'wb') as wav_out:
@@ -171,6 +185,10 @@ with wave.open(str(output_path), 'wb') as wav_out:
             if i == 0:
                 wav_out.setparams(wav_in.getparams())
             wav_out.writeframes(wav_in.readframes(wav_in.getnframes()))
+
+end_time = datetime.now()
+
+print('Time taken to synthesize and vocode: {}'.format(end_time - start_time))
 
 # REMOVE ALL TEMP FILES
 rmtree(temp_output_path)
