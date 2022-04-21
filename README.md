@@ -85,6 +85,10 @@ Synthesizing...
 Clone output to cmdExampleAudio.wav
 ```
 
+### AutoTranslate script
+
+To use the AutoTranslate script on Windows, drag and drop an audio file onto the script or place a shortcut to the script in ```%AppData%\Microsoft\Windows\SendTo\```. For other platforms, the same CLI flags should be used but details on context menu integration will vary by what packages are installed. 
+
 ## Contributing to the project
 
 - Create your own branch ```git branch yourname-feature-name```
