@@ -35,6 +35,6 @@ class translation:
 
     def current_language(self, text):
         if len(text) > 500:
-            return self.translator.detect(text[0:500])
+            return self.translator.detect(text[0:500]).lang
         else:
             return self.translator.detect(text).lang

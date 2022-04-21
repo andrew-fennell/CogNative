@@ -10,8 +10,7 @@ from .models.RTVC.utils.printing import colorize
 from .backend.backend import speech_transcription
 from .backend.modules.translation import translation
 from .backend.modules.STT import STT
-from .backend.modules.utils import mp3_to_wav
-from .backend.modules.text_split import split_text
+from .backend.modules.utils import mp3_to_wav, split_text
 
 
 # GET ARGS
