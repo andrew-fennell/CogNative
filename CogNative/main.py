@@ -1,7 +1,6 @@
 from pathlib import Path
 from shutil import rmtree
 import wave
-import re
 from pydub import AudioSegment
 from datetime import datetime
 
@@ -12,6 +11,7 @@ from .backend.backend import speech_transcription
 from .backend.modules.translation import translation
 from .backend.modules.STT import STT
 from .backend.modules.utils import mp3_to_wav
+from .backend.modules.text_split import split_text
 
 
 # GET ARGS
@@ -87,16 +87,31 @@ if synthesis_type == "audio":
             exit(1)
     
     text = st.transcribe_audio(str(audio_path), dest_lang='english')
-
 else:
     # CHOOSE TEXT
     if '-dialogueText' in args and args.index('-dialogueText') < len(args):
         text = args[args.index('-dialogueText')+1]
     else:
         text = input("Enter text for voice clone:\n")
-        
-    tr = translation()
-    text = tr.translate_to(text, 'english')
+
+# TRANSLATE TEXT    
+tr = translation()
+curr_lang = tr.current_language(text)
+if curr_lang != 'en': # only translate text if it is not coming in as english
+    if len(text) >= 5000: # text file too large (>= 5000 characters), split api requests
+        text_split = split_text(text)
+        text_split_reduced = [""]
+        j = 0
+        for i, sentence in enumerate(text_split):
+            if len(text_split_reduced[j] + sentence) < 5000:
+                text_split_reduced[j] += sentence
+            else:
+                j += 1
+                text_split_reduced.append("")
+        for i in range(len(text_split_reduced)):
+            text += tr.translate_to(text_split_reduced[i], 'english')
+    else: # text file small enough to send in one api request
+        text = tr.translate_to(text, 'english')
 
 # OUTPUT FILE PATH
 if '-out' in args and args.index('-out') < len(args):
@@ -130,16 +145,8 @@ if Path(v.get_embedding_path()).exists():
             print(colorize("ERROR: Enter a .ckpt embedding file", "error"))
             exit(1)
 
-# SEPARATE TEXT BY PUNCTUATION
-punctuation_regex = '\. |\? |\! |\; |\: | \— |\—|\.\.\. |\.|\?|\!|\;|\:|\.\.\.'
-punctuation = re.findall(punctuation_regex, text)
-input_subs_split = re.split(punctuation_regex, text)
-input_subs_split.pop()
-
-# JOIN SENTENCES TO BE SYNTHESIZED TOGETHER
-input_subs = []
-for i in range(0, len(input_subs_split)):
-    input_subs.append(input_subs_split[i] + punctuation[i])
+# SPLIT TEXT FOR SYNTHESIS
+input_subs = split_text(text)
 
 # ENCODE (sometimes this takes time, so it is after inputs)
 if embedding_path:
