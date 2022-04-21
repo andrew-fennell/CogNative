@@ -17,9 +17,6 @@ class speech_transcription:
         # Convert audio file to text (in the same language)
         src_text = stt.speech_to_text(audio_file_path)
 
-        # Translated text from source language to destination language
-        #dest_text = tr.translate_to(src_text, dest_lang)
-
         return src_text
 
 
