@@ -18,9 +18,9 @@ class speech_transcription:
         src_text = stt.speech_to_text(audio_file_path)
 
         # Translated text from source language to destination language
-        dest_text = tr.translate_to(src_text, dest_lang)
+        #dest_text = tr.translate_to(src_text, dest_lang)
 
-        return dest_text
+        return src_text
 
 
 if __name__ == "__main__":
