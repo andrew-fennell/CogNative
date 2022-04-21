@@ -85,6 +85,10 @@ Synthesizing...
 Clone output to cmdExampleAudio.wav
 ```
 
+### AutoTranslate script
+
+This script will translate audio from a supported language to English. To use the AutoTranslate script on Windows, drag and drop an audio file onto the script or place a SHORTCUT to the script in ```%AppData%\Microsoft\Windows\SendTo\``` and use the "Send To" context menu function on an audio file to be translated. In both cases a new .wav file with the orginal filename followed by "Translated" will be placed in the same folder. For other platforms, the same CLI flags should be used but details on context menu integration will vary by what packages are installed. 
+
 ## Contributing to the project
 
 - Create your own branch ```git branch yourname-feature-name```
