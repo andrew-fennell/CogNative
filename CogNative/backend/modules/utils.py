@@ -1,5 +1,6 @@
 from pathlib import Path
 from pydub import AudioSegment
+import re
 
 from ...models.RTVC.utils.printing import colorize
 
@@ -24,6 +25,18 @@ def mp3_to_wav(audio_path):
 
     return str(new_audio_path)
 
+def split_text(text):
+    # SEPARATE TEXT BY PUNCTUATION
+    punctuation_regex = '\. |\? |\! |\; |\: | \— |\—|\.\.\. |\.|\?|\!|\;|\:|\.\.\.'
+    punctuation = re.findall(punctuation_regex, text)
+    input_subs_split = re.split(punctuation_regex, text)
+    input_subs_split.pop()
+
+    # JOIN SENTENCES TO BE TOGETHER
+    input_subs = []
+    for i in range(0, len(input_subs_split)):
+        input_subs.append(input_subs_split[i] + punctuation[i])
+    return input_subs
 
 if __name__ == "__main__":
     audio_path = input("Name of mp3 audio file:\n")
