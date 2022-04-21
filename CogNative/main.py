@@ -11,6 +11,7 @@ from .models.RTVC.utils.printing import colorize
 from .backend.backend import speech_transcription
 from .backend.modules.translation import translation
 from .backend.modules.STT import STT
+from .backend.modules.utils import mp3_to_wav
 
 
 # GET ARGS
@@ -36,8 +37,20 @@ if '-sampleAudio' in args and args.index('-sampleAudio') < len(args):
     file_path = Path(args[args.index('-sampleAudio')+1])
 else:
     file_path = Path(input("Enter input audio file path:\n"))
+    
+if not file_path.exists():
+    print(colorize("ERROR: Path not found.", "error"))
+    exit(1)
+if not file_path.suffix == '.wav':
+    if file_path.suffix == '.mp3':
+        print(colorize("Converting cloning audio to .wav", "warning"))
+        file_path = Path(mp3_to_wav(file_path))
+    else:
+        print(colorize("ERROR: Enter input a .wav or .mp3 file", "error"))
+        exit(1)
 
 # DETECT LANGUAGE OF INPUT AUDIO
+print(colorize("Detecting cloning audio's language...", "success"))
 st_detect = STT()
 src_lang = st_detect.detect_language(file_path)
 
@@ -45,13 +58,6 @@ src_lang = st_detect.detect_language(file_path)
 print("================================================")
 v = RTVC("CogNative/models/RTVC/saved_models/default", src_lang)
 print("================================================")
-    
-if not file_path.exists():
-    print(colorize("ERROR: Path not found.", "error"))
-    exit(1)
-if not file_path.suffix == '.wav':
-    print(colorize("ERROR: Enter an input .wav file", "error"))
-    exit(1)
 
 # CHOOSE TEXT OR AUDIO INPUT
 if '-synType' in args and args.index('-synType') < len(args):
@@ -73,8 +79,12 @@ if synthesis_type == "audio":
         print(colorize("ERROR: Path not found.", "error"))
         exit(1)
     if not audio_path.suffix == '.wav':
-        print(colorize("ERROR: Enter an input .wav file", "error"))
-        exit(1)
+        if audio_path.suffix == '.mp3':
+            print(colorize("Converting cloning audio to .wav", "warning"))
+            audio_path = Path(mp3_to_wav(audio_path))
+        else:
+            print(colorize("ERROR: Enter input a .wav or .mp3 file", "error"))
+            exit(1)
     
     text = st.transcribe_audio(str(audio_path), dest_lang='english')
 
