@@ -100,12 +100,12 @@ if curr_lang != 'en': # only translate text if it is not coming in as english
     if len(text) >= 5000: # text file too large (>= 5000 characters), split api requests
         text_split = split_text(text)
         text_split_reduced = [""]
-        j = 0
-        for i, sentence in enumerate(text_split):
-            if len(text_split_reduced[j] + sentence) < 5000:
-                text_split_reduced[j] += sentence
+        curr_chunk = 0
+        for sentence in text_split:
+            if len(text_split_reduced[curr_chunk] + sentence) < 5000:
+                text_split_reduced[curr_chunk] += sentence
             else:
-                j += 1
+                curr_chunk += 1
                 text_split_reduced.append("")
         for i in range(len(text_split_reduced)):
             text += tr.translate_to(text_split_reduced[i], 'english')
