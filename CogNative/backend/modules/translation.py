@@ -35,6 +35,13 @@ class translation:
 
     def current_language(self, text):
         if len(text) > 500:
-            return self.translator.detect(text[0:500]).lang
+            lang = self.translator.detect(text[0:500]).lang
         else:
-            return self.translator.detect(text).lang
+            lang = self.translator.detect(text).lang
+        
+        # Convert language code to full name of language
+        lang_keys = list(available_languages.keys())
+        lang_codes = [available_languages[x]["translation"] for x in lang_keys]
+        for i in range(len(lang_codes)):
+            if lang_codes[i] == lang:
+                self.source_language = lang_keys[i]

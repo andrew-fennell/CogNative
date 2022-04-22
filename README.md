@@ -7,7 +7,7 @@ Clone a voice and output speech in another language with the original voice.
 
 ### 1. Install Python:
 
-  Python 3.9 is recommended.
+  Python 3.7 is recommended. Python 3.7 is **REQUIRED**, due to the version of tensorflow being used in this project.
 
 ### 2. Create virtual environment (optional):
   ```python3 -m venv pyvenv```
@@ -18,6 +18,8 @@ Clone a voice and output speech in another language with the original voice.
 
   Deactivating the virtual environment:
   ```deactivate```
+
+  Note: Your python virtual environment may cause issues when running the UI.
 
 ### 3. Install [ffmpeg](https://ffmpeg.org/download.html#get-packages). 
 
@@ -35,7 +37,9 @@ Once installed, extract the folder and add ```<ffmpeg folder path>/bin``` to pat
 
 ### 6. Install [models](https://drive.google.com/drive/folders/1fipYnvRT3vayNuGvhfuX1hL0ZC4mEAfs?usp=sharing).
 
-  Once installed, add the models (*.pt) to ```CogNative/CogNative/models/RTVC/saved_models/default```
+  Once downloaded, add the models (*.pt) to ```CogNative/CogNative/models/RTVC/saved_models/default```
+
+  The taco_pretrained folder needs to be downloaded and added to ```CogNative/CogNative/models/RTVCSwedish/synthesizer/saved_models/swedish```
 
 ### 7. Create Google Cloud credentials:
   1. Follow steps to setup [Google Cloud credentials](https://cloud.google.com/docs/authentication/getting-started).
@@ -112,13 +116,11 @@ This github repository serves as the foundation of our voice cloning module.
 
 See license [here](CogNative/models/RTVC/LICENSE.md).
 
-## Credit to noisereduce
+## Credit to Real-Time-Voice-Cloning Swedish
 
-This github repository is used for noise reduction postprocessing on the synthesized output.
+This github repository trained the Swedish synthesizer.
 
-[noisereduce](https://github.com/timsainb/noisereduce)
-
-See license [here](https://github.com/timsainb/noisereduce/blob/master/LICENSE)
+[Real-Time-Voice-Cloning Swedish](https://github.com/raccoonML/Real-Time-Voice-Cloning)
 
 ## Team Members
 
