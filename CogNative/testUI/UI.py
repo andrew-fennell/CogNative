@@ -107,16 +107,16 @@ def cloneVoice():
            '-destLang', data["output"]["dest_lang"],
            ]
     
-    if data["text"]["audio_to_transcribe"]:
-        cmd.append('-dialogueAudio')
-        cmd.append(data["text"]["audio_to_transcribe"])
-        cmd.append('-synType')
-        cmd.append('audio')
-    elif data["text"]["text"]:
-        cmd.append('-dialogueText')
-        cmd.append(f'"{data["text"]["text"]}"')
+    if data["text"]["text"]:
         cmd.append('-synType')
         cmd.append('text')
+        cmd.append('-dialogueText')
+        cmd.append(f'"{data["text"]["text"]}"')
+    elif data["text"]["audio_to_transcribe"]:
+        cmd.append('-synType')
+        cmd.append('audio')
+        cmd.append('-dialogueAudio')
+        cmd.append(data["text"]["audio_to_transcribe"])
     else:
         print(colorize("Missing text to synthesize.", "error"))
         raise Exception("Must enter text or audio to be synthesized.")

@@ -4,17 +4,20 @@ import wave
 from pydub import AudioSegment
 from datetime import datetime
 
+import logging
+import os
+import sys
+
 from .models.RTVC.RTVC import RTVC
 from .models.RTVC.utils.printing import colorize
-from .models.RTVCSwedish.RTVCSwedish import RTVCSwedish
 
-from .backend.backend import speech_transcription
+python_ver = sys.version
+if "3.7" in python_ver:
+    from .models.RTVCSwedish.RTVCSwedish import RTVCSwedish
+
 from .backend.modules.translation import translation
 from .backend.modules.STT import STT
 from .backend.modules.utils import mp3_to_wav, split_text
-
-import logging
-import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
 logging.getLogger('tensorflow').setLevel(logging.FATAL)
@@ -70,15 +73,23 @@ supported_langauges = ['english', 'swedish']
 if '-destLang' in args and args.index('-destLang') < len(args):
     dest_lang = args[args.index('-destLang')+1]
 else:
-    dest_lang = input("Enter the destination language (english, swedish):\n")
+    dest_lang = input("Enter the destination language (english, swedish):\n").lower()
 
-if dest_lang.lower() not in supported_langauges:
+if dest_lang not in supported_langauges:
     print(colorize(f"Please enter a supported language: {supported_langauges}", "error"))
     exit(1)
 
+# Check to ensure the user is using python verions 3.7
+# if swedish was selected as  the destination language
+if dest_lang == "swedish" and "3.7" not in python_ver:
+    print(colorize("MUST be using python version 3.7 "
+                    "('pip install -r requirements.txt' "
+                    "after changing python versions)", "error"))
+    exit(1)
+
 if synthesis_type == "audio":
-    # INITIALIZE SPEECH_TRANSCRIPTION
-    st = speech_transcription(google_creds='../credentials.json')
+    # INITIALIZE STT
+    stt = STT(google_creds='../credentials.json')
 
     # CHOOSE AUDIO FOR STT
     if '-dialogueAudio' in args and args.index('-dialogueAudio') < len(args):
@@ -97,7 +108,7 @@ if synthesis_type == "audio":
             print(colorize("ERROR: Enter input a .wav or .mp3 file", "error"))
             exit(1)
     
-    text = st.transcribe_audio(str(audio_path), dest_lang=dest_lang)
+    text = stt.speech_to_text(str(audio_path))
 else:
     # CHOOSE TEXT
     if '-dialogueText' in args and args.index('-dialogueText') < len(args):
