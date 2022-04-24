@@ -39,7 +39,7 @@ Once installed, extract the folder and add ```<ffmpeg folder path>/bin``` to pat
 
   Once downloaded, add the models (*.pt) to ```CogNative/CogNative/models/RTVC/saved_models/default```
 
-  The taco_pretrained folder needs to be downloaded and added to ```CogNative/CogNative/models/RTVCSwedish/synthesizer/saved_models/swedish```
+  The taco_pretrained folder (including the folder itself) needs to be downloaded and added to ```CogNative/CogNative/models/RTVCSwedish/synthesizer/saved_models/swedish```
 
 ### 7. Create Google Cloud credentials:
   1. Follow steps to setup [Google Cloud credentials](https://cloud.google.com/docs/authentication/getting-started).
