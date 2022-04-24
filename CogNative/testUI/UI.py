@@ -24,7 +24,8 @@ data = {
     },
     "output": {
         "output_audio_path": None,
-        "output_dir": ""
+        "output_dir": "",
+        "dest_lang": "",
     },
 }
 
@@ -92,27 +93,30 @@ def cloneVoice():
         data["text"]["text"] = text_in_entry
 
     output_dir = data["output"]["output_dir"]
-    data["output"]["output_audio_path"] = f"{output_dir}/{output_name_entry.get()}"
+    data["output"]["output_audio_path"] = f"{output_dir}/{output_name_entry.get() + output_type.get()}"
     output_dir_lbl.config(text=data["output"]["output_audio_path"])
+
+    data["output"]["dest_lang"] = dest_lang.get()
 
     embedding_check = 'y' if data["input"]["use_embedding"] else 'n'
 
     cmd = ['python', '-m', 'CogNative.main',
            '-sampleAudio', data["input"]["audio_to_clone"],
            '-out', data["output"]["output_audio_path"],
-           '-useExistingEmbed', embedding_check
+           '-useExistingEmbed', embedding_check,
+           '-destLang', data["output"]["dest_lang"],
            ]
     
-    if data["text"]["audio_to_transcribe"]:
-        cmd.append('-dialogueAudio')
-        cmd.append(data["text"]["audio_to_transcribe"])
-        cmd.append('-synType')
-        cmd.append('audio')
-    elif data["text"]["text"]:
-        cmd.append('-dialogueText')
-        cmd.append(f'"{data["text"]["text"]}"')
+    if data["text"]["text"]:
         cmd.append('-synType')
         cmd.append('text')
+        cmd.append('-dialogueText')
+        cmd.append(f'"{data["text"]["text"]}"')
+    elif data["text"]["audio_to_transcribe"]:
+        cmd.append('-synType')
+        cmd.append('audio')
+        cmd.append('-dialogueAudio')
+        cmd.append(data["text"]["audio_to_transcribe"])
     else:
         print(colorize("Missing text to synthesize.", "error"))
         raise Exception("Must enter text or audio to be synthesized.")
@@ -121,69 +125,27 @@ def cloneVoice():
         global run_lock
         if not run_lock:
             run_lock = True
+
             try:
                 print("=============================================")
                 print(' '.join(cmd))
                 print("=============================================")
-
-                # Set status label
-                status_lbl = Label(ws, text="Cloning voice...").grid(
-                    row=8, columnspan=3, pady=10
-                )
             except Exception:
                 run_lock = False
                 print(colorize("Missing input.", "error"))
             
             try:
                 # Run the command to clone
-                process = subprocess.run(cmd, capture_output=True)
+                process = subprocess.call('cmd /k' + ' '.join(cmd), creationflags=subprocess.CREATE_NEW_CONSOLE)
             except Exception:
                 run_lock = False
                 print(colorize("Error in main.", "error"))
                 raise Exception
 
-            try:
-                # Collect info on subprocess
-                stdout = process.stdout
-
-                # Get the last line of the output
-                output = stdout.decode('utf-8').split('\n')[-2]
-
-                # Strip Fore colors off of the printed output
-                # IF the Fore information is contained in the output
-                if Fore.LIGHTGREEN_EX in output:
-                    color = "green"
-                    output = output.split(Fore.LIGHTGREEN_EX)[1]
-                elif Fore.RED in output:
-                    color = "red"
-                    output = output.split(Fore.RED)[1]
-                elif Fore.YELLOW in output:
-                    color = "yellow"
-                    output = output.split(Fore.YELLOW)[1]
-                elif Fore.CYAN in output:
-                    color = "blue"
-                    output = output.split(Fore.CYAN)[1]
-                else:
-                    color = "red"
-
-                # If there is a Fore.RESET, strip it off too
-                if Fore.RESET in output:
-                    output = output.split(Fore.RESET)[0]
-
-                # Set status label to output
-                status_lbl = Label(ws, text=output, foreground=color).grid(
-                    row=8, columnspan=3, pady=10
-                )
-                print(f"last line of output: {output}")
-            except Exception:
-                run_lock = False
-                print(colorize("Error while processing stdout.", "error"))
-                raise Exception
-
             run_lock = False
         else:
-            locked_error = "ERROR: Another voice is already being cloned right now."
-            print(colorize(locked_error, "error"))
+            print(colorize("ERROR: Another voice is already being cloned right now.", "error"))
+            print(colorize("ERROR: To clone another voice, please close the open terminal.", "error"))
 
     thr = threading.Thread(target=run_main)
     thr.daemon = True # close pipe if GUI exits
@@ -245,15 +207,49 @@ output_path_lbl.grid(row=4, column=0, padx=10, pady=20)
 output_name_entry = Entry(ws)
 output_name_entry.grid(row=4, column=1, pady=20)
 
+# Dropdown menu options
+output_type_options = [
+    ".wav",  # default option
+    ".wav",
+    ".mp3",
+]
+
+# datatype of menu text
+output_type = StringVar()
+
+# initial menu text
+output_type.set(".wav")
+
+# Create Dropdown menu
+output_type_drop = OptionMenu(ws, output_type, *output_type_options)
+output_type_drop.grid(row=4, column=2)
+
 output_path_lbl = Label(ws, text="Select output path:")
-output_path_lbl.grid(row=4, column=2, padx=10, pady=20)
+output_path_lbl.grid(row=4, column=3, padx=10, pady=20)
 
 output_path_btn = Button(
     ws,
     text="Choose Directory",
     command=lambda: save_path("output", "output_dir"),
 )
-output_path_btn.grid(row=4, column=3, pady=20)
+output_path_btn.grid(row=4, column=4, pady=20)
+
+# Dropdown menu options
+lang_options = [
+    "english",  # default option
+    "english",
+    "swedish",
+]
+
+# datatype of menu text
+dest_lang = StringVar()
+
+# initial menu text
+dest_lang.set("english")
+
+# Create Dropdown menu
+dest_lang_drop = OptionMenu(ws, dest_lang, *lang_options)
+dest_lang_drop.grid(row=4, column=5, pady=20)
 
 # ----- ROW 5 ----- #
 output_selected_lbl = Label(ws, text="Output path:")
@@ -265,10 +261,5 @@ output_dir_lbl.grid(row=5, column=1, columnspan=2, padx=20, pady=20)
 # ----- ROW 6 ----- #
 upld = Button(ws, text="Clone voice", command=buttonHandle)
 upld.grid(row=6, columnspan=3, pady=20, padx=20, ipadx=25, ipady=12)
-
-# ----- ROW 8 ----- #
-status_lbl = Label(ws, text="").grid(
-    row=8, columnspan=3, pady=10
-)
 
 ws.mainloop()

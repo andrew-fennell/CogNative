@@ -4,14 +4,23 @@ import wave
 from pydub import AudioSegment
 from datetime import datetime
 
+import logging
+import os
+import sys
+
 from .models.RTVC.RTVC import RTVC
 from .models.RTVC.utils.printing import colorize
 
-from .backend.backend import speech_transcription
+python_ver = sys.version
+if "3.7" in python_ver:
+    from .models.RTVCSwedish.RTVCSwedish import RTVCSwedish
+
 from .backend.modules.translation import translation
 from .backend.modules.STT import STT
 from .backend.modules.utils import mp3_to_wav, split_text, punctuation_spacer
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
+logging.getLogger('tensorflow').setLevel(logging.FATAL)
 
 # GET ARGS
 # make args list containing only actual arguments
@@ -53,20 +62,34 @@ print(colorize("Detecting cloning audio's language...", "success"))
 st_detect = STT()
 src_lang = st_detect.detect_language(file_path)
 
-# INITIALIZE RTVC
-print("================================================")
-v = RTVC("CogNative/models/RTVC/saved_models/default", src_lang)
-print("================================================")
-
 # CHOOSE TEXT OR AUDIO INPUT
 if '-synType' in args and args.index('-synType') < len(args):
     synthesis_type = args[args.index('-synType')+1].lower()
 else:
     synthesis_type = input("Synthesize from text or audio? (text/audio)\n").lower()
 
+# SET DESTINATION LANGUAGE
+supported_langauges = ['english', 'swedish']
+if '-destLang' in args and args.index('-destLang') < len(args):
+    dest_lang = args[args.index('-destLang')+1]
+else:
+    dest_lang = input("Enter the destination language (english, swedish):\n").lower()
+
+if dest_lang not in supported_langauges:
+    print(colorize(f"Please enter a supported language: {supported_langauges}", "error"))
+    exit(1)
+
+# Check to ensure the user is using python verions 3.7
+# if swedish was selected as  the destination language
+if dest_lang == "swedish" and "3.7" not in python_ver:
+    print(colorize("MUST be using python version 3.7 "
+                    "('pip install -r requirements.txt' "
+                    "after changing python versions)", "error"))
+    exit(1)
+
 if synthesis_type == "audio":
-    # INITIALIZE SPEECH_TRANSCRIPTION
-    st = speech_transcription(google_creds='../credentials.json')
+    # INITIALIZE STT
+    stt = STT(google_creds='../credentials.json')
 
     # CHOOSE AUDIO FOR STT
     if '-dialogueAudio' in args and args.index('-dialogueAudio') < len(args):
@@ -85,7 +108,7 @@ if synthesis_type == "audio":
             print(colorize("ERROR: Enter input a .wav or .mp3 file", "error"))
             exit(1)
     
-    text = st.transcribe_audio(str(audio_path), dest_lang='english')
+    text = stt.speech_to_text(str(audio_path))
 else:
     # CHOOSE TEXT
     if '-dialogueText' in args and args.index('-dialogueText') < len(args):
@@ -93,10 +116,10 @@ else:
     else:
         text = input("Enter text for voice clone:\n")
 
-# TRANSLATE TEXT    
+# TRANSLATE TEXT
 tr = translation()
 curr_lang = tr.current_language(text)
-if curr_lang != 'en': # only translate text if it is not coming in as english
+if curr_lang != dest_lang: # only translate text if it is not coming in as english
     if len(text) >= 5000: # text file too large (>= 5000 characters), split api requests
         text_split = split_text(text)
         text_split_reduced = [""]
@@ -108,9 +131,9 @@ if curr_lang != 'en': # only translate text if it is not coming in as english
                 curr_chunk += 1
                 text_split_reduced.append("")
         for i in range(len(text_split_reduced)):
-            text += tr.translate_to(text_split_reduced[i], 'english')
+            text += tr.translate_to(text_split_reduced[i], dest_lang)
     else: # text file small enough to send in one api request
-        text = tr.translate_to(text, 'english')
+        text = tr.translate_to(text, dest_lang)
 
 # MAKE CORRECTIONS TO TEXT
 tld_list = {
@@ -134,13 +157,25 @@ if '-out' in args and args.index('-out') < len(args):
     output_path = Path(args[args.index('-out')+1])
 else:
     output_path = Path(input("Enter output audio path:\n"))
-    
+
 if not output_path.parent.exists():
     print(colorize("ERROR: Directory not found.", "error"))
     exit(1)
-if not output_path.suffix == '.wav':
-    print(colorize("ERROR: Enter an output .wav file", "error"))
+if not output_path.suffix in ['.wav', '.mp3']:
+    print(colorize("ERROR: Enter an output .wav or .mp3 file", "error"))
     exit(1)
+
+# INITIALIZE RTVC
+print("================================================")
+if dest_lang == "swedish":
+    # Synthesizes with tensorflow
+    # Swedish synthesizer
+    v = RTVCSwedish(src_lang)
+else:
+    # Synthesizes with PyTorch
+    # English synthesizer
+    v = RTVC(src_lang)
+print("================================================")
 
 v.set_file_path(file_path)
 
@@ -171,7 +206,7 @@ else:
     v.encode_voice(file_path, save_embedding=True)
 
 # OUTPUT AUDIO FILE PATHS
-temp_output_path = Path('temp')
+temp_output_path = Path(f"temp_{file_path.with_suffix('').name}_{dest_lang}")
 if not temp_output_path.exists():
     temp_output_path.mkdir()
 out_paths = []
