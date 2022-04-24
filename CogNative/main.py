@@ -189,7 +189,7 @@ else:
     v.encode_voice(file_path, save_embedding=True)
 
 # OUTPUT AUDIO FILE PATHS
-temp_output_path = Path('temp')
+temp_output_path = Path(f"temp_{file_path.with_suffix('').name}_{dest_lang}")
 if not temp_output_path.exists():
     temp_output_path.mkdir()
 out_paths = []

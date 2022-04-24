@@ -144,8 +144,8 @@ def cloneVoice():
 
             run_lock = False
         else:
-            locked_error = "ERROR: Another voice is already being cloned right now."
-            print(colorize(locked_error, "error"))
+            print(colorize("ERROR: Another voice is already being cloned right now.", "error"))
+            print(colorize("ERROR: To clone another voice, please close the open terminal.", "error"))
 
     thr = threading.Thread(target=run_main)
     thr.daemon = True # close pipe if GUI exits
