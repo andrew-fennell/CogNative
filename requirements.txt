@@ -13,6 +13,7 @@ inflect==5.3.0
 ipython>=7.31.1
 librosa==0.8.1
 matplotlib==3.5.1
+multiprocess==0.70.12.2
 nltk==3.7
 noisereduce==2.0.0
 numpy>=1.21
