@@ -121,7 +121,7 @@ class STT:
             print(colorize("ERROR: Enter an input .wav file", "error"))
             exit(1)
 
-        temp_dir = Path('temp_detect')
+        temp_dir = Path(f"temp_detect_{Path(audio_path).with_suffix('').name}")
         if not temp_dir.exists():
             temp_dir.mkdir()
 
