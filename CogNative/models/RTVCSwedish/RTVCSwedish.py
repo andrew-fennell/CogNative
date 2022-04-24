@@ -19,16 +19,15 @@ import numpy as np
 import librosa
 import os
 
-class RTVC:
+class RTVCSwedish:
     def __init__(self, src_lang):
         # SET UP PRETRAINED MODEL PATHS
         enc_weights = Path(f"CogNative/models/RTVC/saved_models/default/{src_lang}_encoder.pt")
         voc_weights = Path("CogNative/models/RTVC/saved_models/default/vocoder.pt")
-        synth_dir = Path("CogNative/models/RTVC/saved_models/default/synthesizer.pt")
 
         # LOAD PRETRAINED MODELS
         encoder.load_model(enc_weights)
-        self.synthesizer = Synthesizer(synth_dir)
+        self.synthesizer = Synthesizer(Path("CogNative/models/RTVCSwedish/synthesizer/saved_models/swedish\\taco_pretrained"), low_mem=False, seed=1)
         vocoder.load_model(voc_weights)
 
         # Define variables
@@ -99,7 +98,7 @@ class RTVC:
 
 if __name__ == "__main__":    
     # Initialize RTVC
-    v = RTVC()
+    v = RTVCSwedish()
     v.encode_voice()
     
     # DEFINE OUTPUT TEXT FOR VOICE CLONE

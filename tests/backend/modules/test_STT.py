@@ -1,13 +1,44 @@
 import pytest
 from ....CogNative.backend.modules.STT import STT
 
-from nltk.translate import bleu
-from nltk.translate.bleu_score import SmoothingFunction
+import os
+import sys
+import logging
 
+python_ver = sys.version
+use_ST = False
+if "3.7" in python_ver:
+    # If Python 3.7, use sentence_transformers to evaluate sentences
+    # Otherwise, we will use the bleu score (which is less accurate)
+    from sentence_transformers import SentenceTransformer, util
+    use_ST = True
+else:
+    from nltk.translate import bleu
+    from nltk.translate.bleu_score import SmoothingFunction
 
 def test_invalid_language():
     """Need to input audio with a language that is not supported."""
     pass
+
+def compare_sentences(text1, text2):
+    # Instantiate SentenceTransformer to compare sentence similarity
+    model = SentenceTransformer('paraphrase-MiniLM-L12-v2')
+
+    # Compute embedding for both lists
+    actual_embeddings = model.encode(text1, convert_to_tensor=True)
+    transcribed_embeddings = model.encode(text2, convert_to_tensor=True)
+
+    # Compute cosine-similarities
+    cosine_scores = util.pytorch_cos_sim(actual_embeddings, transcribed_embeddings)
+
+    return cosine_scores.cpu().numpy()[0]
+
+def get_accuracy(text1, text2):
+    if use_ST:
+        return compare_sentences(text1, text2)
+    else:
+        smoothie = SmoothingFunction().method4
+        return bleu([text1], text2, smoothing_function=smoothie)
 
 def test_english():
     s = STT()
@@ -27,8 +58,7 @@ def test_english():
                    "this is history major stuff.")
     
     # Check if synthesized text vs actual text is greater than 90%
-    smoothie = SmoothingFunction().method4
-    assert bleu([actual_text], text, smoothing_function=smoothie) > 0.9
+    assert get_accuracy(actual_text, text) > 0.9
 
     example_path2 = "tests/examples/DavidHowell15.wav"
     text2 = s.speech_to_text(example_path2)
@@ -41,7 +71,7 @@ def test_english():
                     "available to make life work.")
     
     # Check if synthesized text vs actual text is greater than 90%
-    assert bleu([actual_text2], text2, smoothing_function=smoothie) > 0.9
+    assert get_accuracy(actual_text2, text2) > 0.9
 
     # Check if get_transcriptions() is storing the correct
     # correct text with the source audio file
