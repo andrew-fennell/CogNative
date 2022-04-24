@@ -38,6 +38,12 @@ def split_text(text):
         input_subs.append(input_subs_split[i] + punctuation[i])
     return input_subs
 
+def punctuation_spacer(text):
+    punctuation_list = ['...', '.', '?', '!', ';', '—']
+    for x in punctuation_list:
+        text = text.replace(x, x + " ")
+    return text
+
 if __name__ == "__main__":
     audio_path = input("Name of mp3 audio file:\n")
     assert Path(audio_path).exists, print(
