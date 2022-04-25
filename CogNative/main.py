@@ -17,7 +17,7 @@ if "3.7" in python_ver:
 
 from .backend.modules.translation import translation
 from .backend.modules.STT import STT
-from .backend.modules.utils import mp3_to_wav, split_text
+from .backend.modules.utils import mp3_to_wav, split_text, punctuation_spacer
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
 logging.getLogger('tensorflow').setLevel(logging.FATAL)
@@ -134,6 +134,23 @@ if curr_lang != dest_lang: # only translate text if it is not coming in as engli
             text += tr.translate_to(text_split_reduced[i], dest_lang)
     else: # text file small enough to send in one api request
         text = tr.translate_to(text, dest_lang)
+
+# MAKE CORRECTIONS TO TEXT
+tld_list = {
+    ".com": " dot com",
+    ".org": " dot org",
+    ".gov": " dot gov",
+    ".co": " dot co",
+    ".dev": " dot dev"
+}
+
+# REPLACE ANY COMMON TOP-LEVEL DOMAINS IN TEXT
+# example: .com, .org, .gov
+for tld in tld_list.keys():
+    text = text.replace(tld, tld_list[tld])
+
+# ENSURE ALL PERIODS HAVE A SPACE AFTER THEM
+text = punctuation_spacer(text)
 
 # OUTPUT FILE PATH
 if '-out' in args and args.index('-out') < len(args):

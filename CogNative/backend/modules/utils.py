@@ -26,10 +26,8 @@ def mp3_to_wav(audio_path):
     return str(new_audio_path)
 
 def split_text(text):
-    # SEPARATE TEXT BY PUNCTUATION
     punctuation_regex = '\. |\? |\! |\; |\: | \— |\—|\.\.\. |\.|\?|\!|\;|\:|\.\.\.'
 
-    
     # CHECKS INPUT VALIDITY
     if len(text) == 0:
         print(colorize("Please enter text into the split_text function.", "error"))
@@ -49,6 +47,12 @@ def split_text(text):
     for i in range(0, len(input_subs_split)):
         input_subs.append(input_subs_split[i] + punctuation[i])
     return input_subs
+
+def punctuation_spacer(text):
+    punctuation_list = ['...', '.', '?', '!', ';', '—']
+    for x in punctuation_list:
+        text = text.replace(x, x + " ")
+    return text
 
 if __name__ == "__main__":
     audio_path = input("Name of mp3 audio file:\n")
