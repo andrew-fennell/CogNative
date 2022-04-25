@@ -28,6 +28,18 @@ def mp3_to_wav(audio_path):
 def split_text(text):
     # SEPARATE TEXT BY PUNCTUATION
     punctuation_regex = '\. |\? |\! |\; |\: | \— |\—|\.\.\. |\.|\?|\!|\;|\:|\.\.\.'
+
+    
+    # CHECKS INPUT VALIDITY
+    if len(text) == 0:
+        print(colorize("Please enter text into the split_text function.", "error"))
+        exit(1)
+
+    # ADD PUNCTUATION TO END OF TEXT, IF NEEDED
+    if text[-1] not in punctuation_regex:
+        text += '.'
+
+    # SEPARATE TEXT BY PUNCTUATION
     punctuation = re.findall(punctuation_regex, text)
     input_subs_split = re.split(punctuation_regex, text)
     input_subs_split.pop()
