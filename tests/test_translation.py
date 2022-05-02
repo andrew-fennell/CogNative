@@ -133,7 +133,7 @@ def test_spanish_to_english():
     
     # Check if synthesized spanish_text vs translated_text 
     # is greater than 70%
-    assert get_accuracy(english_text, translated_text) > 0.8
+    assert get_accuracy(english_text, translated_text) > 0.75
 
 def test_english_to_swedish():
     """
